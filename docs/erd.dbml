@@ -1,0 +1,62 @@
+Table roles {
+  role_id integer [pk, increment]
+  role_name varchar(30) [not null, unique]
+}
+
+Table users {
+  users_id integer [pk, increment]
+  role_id integer [not null]
+  username varchar(50) [not null, unique]
+  password varchar(255) [not null]
+  created_at timestamp [not null]
+}
+
+Table course {
+  course_id integer [pk, increment]
+  instructor_id integer
+  course_name varchar(100) [not null]
+  course_description text
+  created_at timestamp [not null]
+}
+
+Table enrollment {
+  enrollment_id integer [pk, increment]
+  users_id integer [not null]
+  course_id integer [not null]
+  enrollment_status varchar(20) [not null]
+  enrolled_at timestamp [not null]
+
+  indexes {
+    (users_id, course_id) [unique]
+  }
+}
+
+Table document {
+  document_id integer [pk, increment]
+  course_id integer [not null]
+  document_name varchar(150) [not null]
+  document_text text [not null]
+  file_url varchar(500)
+  created_at timestamp [not null]
+}
+
+Table reflections {
+  reflections_id integer [pk, increment]
+  users_id integer [not null]
+  course_id integer [not null]
+  understood_content text [not null]
+  difficult_content text [not null]
+  question_content text
+  reflection_status varchar(20) [not null]
+  created_at timestamp [not null]
+  updated_at timestamp
+}
+
+Ref: users.role_id > roles.role_id
+Ref: course.instructor_id > users.users_id
+Ref: enrollment.users_id > users.users_id
+Ref: enrollment.course_id > course.course_id
+Ref: document.course_id > course.course_id
+Ref: reflections.users_id > users.users_id
+Ref: reflections.course_id > course.course_id
+

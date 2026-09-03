@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: ai-review-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ai_review}
+      POSTGRES_USER: ${POSTGRES_USER:-ai_review}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ai_review}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ai-review-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ai_review} -d ${POSTGRES_DB:-ai_review}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: ai-review-backend
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-ai_review}
+      DB_USERNAME: ${POSTGRES_USER:-ai_review}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-ai_review}
+      FRONTEND_ORIGIN: http://localhost:5173
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: http://localhost:8080/api
+    container_name: ai-review-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  ai-review-postgres-data:

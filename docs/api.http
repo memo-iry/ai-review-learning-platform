@@ -1,0 +1,26 @@
+@baseUrl = http://localhost:8080/api
+
+### 교육과정 목록
+GET {{baseUrl}}/courses
+
+### 과정별 강의자료
+GET {{baseUrl}}/courses/1/documents
+
+### 회고록 등록
+POST {{baseUrl}}/reflections
+Content-Type: application/json
+
+{
+  "userId": 2,
+  "courseId": 1,
+  "understoodContent": "Controller에서 요청을 받고 Service를 호출하는 흐름은 이해했습니다.",
+  "difficultContent": "Service와 Repository의 책임을 정확히 구분하는 부분이 어렵습니다.",
+  "questionContent": "DTO 변환은 어느 계층에서 하는 것이 좋나요?"
+}
+
+### 회고록 조회 - 위 등록 응답의 reflectionId를 사용하세요.
+GET {{baseUrl}}/reflections/1
+
+### Mock AI 이해도 분석 및 복습자료 생성
+POST {{baseUrl}}/reflections/1/analyze
+
