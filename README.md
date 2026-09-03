@@ -210,6 +210,18 @@ score  0-25 → Level 1 인지    26-50 → Level 2 이해
 
 프론트엔드는 현재 `userId = 2` 를 사용합니다. 인증은 MVP 범위 밖입니다.
 
+시연 전 상태를 되돌리려면 `supabase/demo-reset.sql` 을 Supabase SQL Editor 에
+붙여넣고 실행합니다. 회고·분석·복습자료·Quiz·응시기록을 지우고 아래 상태로 맞춥니다.
+
+```
+학습 수준   Level 2 이해
+학습 진도   50%  (회고 2 / 강의 4)
+평균 이해도  47%  (Vue 55 · Docker 58 · Kubernetes 42 · Vue Router 35)
+```
+
+Spring AI 와 AI 웹 서비스 설계 강의에는 회고가 없습니다. 시연에서 그 자리에 회고를
+작성해 분석 → 복습 → Quiz → 이해도 변화까지 실시간으로 보여주기 위한 구성입니다.
+
 `password` 는 구조 확인용 예시 값입니다. 실제 로그인을 붙일 때 Spring Security 와 BCrypt 가
 필요합니다.
 
