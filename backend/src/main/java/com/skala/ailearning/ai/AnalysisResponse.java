@@ -11,6 +11,8 @@ public record AnalysisResponse(
         List<String> understoodTopics,
         List<String> weakTopics,
         List<String> recommendedTopics,
+        int levelBefore,
+        int levelAfter,
         ReviewMaterial reviewMaterial
 ) {
     public record ReviewMaterial(

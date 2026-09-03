@@ -8,6 +8,7 @@ import com.skala.ailearning.lecture.LectureMaterialRepository;
 import com.skala.ailearning.lecture.LectureRepository;
 import com.skala.ailearning.mastery.ConceptMastery;
 import com.skala.ailearning.mastery.ConceptMasteryRepository;
+import com.skala.ailearning.mastery.MasteryService;
 import com.skala.ailearning.quiz.Quiz;
 import com.skala.ailearning.quiz.QuizRepository;
 import com.skala.ailearning.user.User;
@@ -34,6 +35,7 @@ public class ReflectionService {
     private final PersonalizedReviewRepository reviewRepository;
     private final QuizRepository quizRepository;
     private final ConceptMasteryRepository masteryRepository;
+    private final MasteryService masteryService;
     private final AiAnalysisPort aiAnalysisPort;
     private final ObjectMapper objectMapper;
 
@@ -45,6 +47,7 @@ public class ReflectionService {
                              PersonalizedReviewRepository reviewRepository,
                              QuizRepository quizRepository,
                              ConceptMasteryRepository masteryRepository,
+                             MasteryService masteryService,
                              AiAnalysisPort aiAnalysisPort,
                              ObjectMapper objectMapper) {
         this.reflectionRepository = reflectionRepository;
@@ -55,6 +58,7 @@ public class ReflectionService {
         this.reviewRepository = reviewRepository;
         this.quizRepository = quizRepository;
         this.masteryRepository = masteryRepository;
+        this.masteryService = masteryService;
         this.aiAnalysisPort = aiAnalysisPort;
         this.objectMapper = objectMapper;
     }
@@ -99,12 +103,16 @@ public class ReflectionService {
                 reflection.getWantsToLearn()
         ));
 
+        int levelBefore = masteryService.currentLevel(reflection.getUser().getUserId());
+
         AiAnalysis analysis = saveAnalysis(reflection, result);
         PersonalizedReview review = saveReview(analysis, result);
         saveQuiz(review, result);
         updateMastery(reflection.getUser(), result);
 
-        return toResponse(analysis, review, result);
+        int levelAfter = masteryService.currentLevel(reflection.getUser().getUserId());
+
+        return toResponse(analysis, review, result, levelBefore, levelAfter);
     }
 
     private AiAnalysis saveAnalysis(Reflection reflection, AiAnalysisResult result) {
@@ -178,7 +186,9 @@ public class ReflectionService {
 
     private AnalysisResponse toResponse(AiAnalysis analysis,
                                         PersonalizedReview review,
-                                        AiAnalysisResult result) {
+                                        AiAnalysisResult result,
+                                        int levelBefore,
+                                        int levelAfter) {
         List<AnalysisResponse.QuizItem> quiz = result.quiz().stream()
                 .map(item -> new AnalysisResponse.QuizItem(item.question(), item.answer()))
                 .toList();
@@ -192,6 +202,8 @@ public class ReflectionService {
                 result.understoodTopics(),
                 result.weakTopics(),
                 result.recommendedTopics(),
+                levelBefore,
+                levelAfter,
                 new AnalysisResponse.ReviewMaterial(
                         review.getReviewId(),
                         result.reviewTitle(),
