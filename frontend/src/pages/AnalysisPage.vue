@@ -7,6 +7,7 @@ import BaseButton from '@/components/common/BaseButton.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import PageHeading from '@/components/common/PageHeading.vue'
 import AppSection from '@/components/common/AppSection.vue'
+import AppLayout from '@/components/AppLayout.vue'
 
 import AnalysisScoreCard from '@/components/analysis/AnalysisScoreCard.vue'
 import AnalysisResultGrid from '@/components/analysis/AnalysisResultGrid.vue'
@@ -25,6 +26,9 @@ function moveToReflection() {
 </script>
 
 <template>
+  <section>
+    <AppLayout />
+  </section>
   <div class="analysis-page">
     <template v-if="analysis">
       <PageHeading eyebrow="AI 이해도 분석" title="회고록을 바탕으로 학습 상태를 분석했습니다." />

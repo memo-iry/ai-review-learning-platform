@@ -3,6 +3,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api/client.js'
 import { learningState } from '../stores/learning.js'
+import AppLayout from '../components/AppLayout.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -38,6 +39,9 @@ async function submit() {
 </script>
 
 <template>
+  <section>
+    <AppLayout />
+  </section>
   <button class="text-button" @click="router.push({ name: 'dashboard' })">← 대시보드</button>
   <section class="page-heading"><div><p class="eyebrow">{{ lecture.title }}</p><h1>강의자료를 확인하고 회고록을 작성하세요.</h1></div></section>
   <div class="two-column">

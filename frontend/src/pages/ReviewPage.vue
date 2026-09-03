@@ -3,6 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api/client.js'
 import { learningState } from '../stores/learning.js'
+import AppLayout from '../components/AppLayout.vue'
 
 const router = useRouter()
 
@@ -39,6 +40,9 @@ function completeReview() {
 </script>
 
 <template>
+  <section>
+    <AppLayout />
+  </section>
   <div v-if="review">
     <section class="page-heading">
       <div>

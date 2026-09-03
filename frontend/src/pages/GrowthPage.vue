@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { learningState, resetLearning } from '../stores/learning.js'
+import AppLayout from '../components/AppLayout.vue'
 
 const LEVEL_NAMES = ['', '인지', '이해', '적용', '구현']
 
@@ -19,6 +20,9 @@ function backToDashboard() {
 </script>
 
 <template>
+  <section>
+    <AppLayout />
+  </section>
   <section class="growth-page">
     <p class="eyebrow">복습 완료</p>
     <h1>학습 결과가 성장 기록에 반영되었습니다.</h1>

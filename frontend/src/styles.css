@@ -74,3 +74,23 @@ body {
 button {
   font-family: inherit;
 }
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.sidebar{
+  width: 250px;
+  flex-shrink: 0;
+
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
