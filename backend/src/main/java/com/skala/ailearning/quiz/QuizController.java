@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class QuizController {
 
     private final QuizService quizService;
+    private final com.skala.ailearning.common.AccessGuard accessGuard;
 
-    public QuizController(QuizService quizService) {
+    public QuizController(QuizService quizService,
+                          com.skala.ailearning.common.AccessGuard accessGuard) {
         this.quizService = quizService;
+        this.accessGuard = accessGuard;
     }
 
     @Operation(
@@ -45,6 +48,7 @@ public class QuizController {
     @ResponseStatus(HttpStatus.CREATED)
     public QuizAttemptResponse submit(@PathVariable Long quizId,
                                       @Valid @RequestBody QuizAttemptRequest request) {
+        accessGuard.requireSelfOrAdmin(request.userId());
         return quizService.submit(quizId, request);
     }
 }

@@ -91,6 +91,12 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
+    public Long findOwnerUserId(Long reviewId) {
+        return reviewRepository.findOwnerUserId(reviewId)
+                .orElseThrow(() -> new NotFoundException("복습자료를 찾을 수 없습니다: " + reviewId));
+    }
+
+    @Transactional(readOnly = true)
     public ReviewDetailResponse findDetail(Long reviewId) {
         PersonalizedReview review = reviewRepository.findDetailById(reviewId)
                 .orElseThrow(() -> new NotFoundException("복습자료를 찾을 수 없습니다: " + reviewId));

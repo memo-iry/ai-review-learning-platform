@@ -83,6 +83,13 @@ public class ReflectionService {
         return ReflectionResponse.from(reflectionRepository.save(reflection));
     }
 
+    @Transactional(readOnly = true)
+    public Long findOwnerUserId(Long reflectionId) {
+        return reflectionRepository.findById(reflectionId)
+                .map(reflection -> reflection.getUser().getUserId())
+                .orElseThrow(() -> new NotFoundException("회고를 찾을 수 없습니다: " + reflectionId));
+    }
+
     @Transactional
     public AnalysisResponse analyze(Long reflectionId) {
         Reflection reflection = reflectionRepository.findById(reflectionId)

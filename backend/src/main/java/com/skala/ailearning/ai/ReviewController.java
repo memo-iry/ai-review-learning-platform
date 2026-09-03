@@ -18,9 +18,12 @@ import java.util.List;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final com.skala.ailearning.common.AccessGuard accessGuard;
 
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService,
+                            com.skala.ailearning.common.AccessGuard accessGuard) {
         this.reviewService = reviewService;
+        this.accessGuard = accessGuard;
     }
 
     @Operation(
@@ -36,6 +39,7 @@ public class ReviewController {
     })
     @GetMapping("/api/users/{userId}/reviews")
     public List<ReviewSummaryResponse> getReviews(@PathVariable Long userId) {
+        accessGuard.requireSelfOrAdmin(userId);
         return reviewService.findAllByUser(userId);
     }
 
@@ -52,6 +56,7 @@ public class ReviewController {
     })
     @GetMapping("/api/reviews/{reviewId}")
     public ReviewDetailResponse getReview(@PathVariable Long reviewId) {
+        accessGuard.requireSelfOrAdmin(reviewService.findOwnerUserId(reviewId));
         return reviewService.findDetail(reviewId);
     }
 }

@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class MasteryController {
 
     private final MasteryService masteryService;
+    private final com.skala.ailearning.common.AccessGuard accessGuard;
 
-    public MasteryController(MasteryService masteryService) {
+    public MasteryController(MasteryService masteryService,
+                             com.skala.ailearning.common.AccessGuard accessGuard) {
         this.masteryService = masteryService;
+        this.accessGuard = accessGuard;
     }
 
     @Operation(
@@ -37,11 +40,16 @@ public class MasteryController {
                     """)
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "401", description = "로그인 필요",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "403", description = "다른 사용자의 데이터",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             @ApiResponse(responseCode = "404", description = "사용자 없음",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("/{userId}/mastery")
     public MasteryResponse getMastery(@PathVariable Long userId) {
+        accessGuard.requireSelfOrAdmin(userId);
         return masteryService.getMastery(userId);
     }
 }

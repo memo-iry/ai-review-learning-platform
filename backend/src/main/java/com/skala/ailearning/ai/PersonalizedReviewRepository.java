@@ -30,4 +30,12 @@ public interface PersonalizedReviewRepository extends JpaRepository<Personalized
             where r.reviewId = :reviewId
             """)
     Optional<PersonalizedReview> findDetailById(@Param("reviewId") Long reviewId);
+
+    @Query("""
+            select f.user.userId from PersonalizedReview r
+            join r.analysis a
+            join a.reflection f
+            where r.reviewId = :reviewId
+            """)
+    Optional<Long> findOwnerUserId(@Param("reviewId") Long reviewId);
 }

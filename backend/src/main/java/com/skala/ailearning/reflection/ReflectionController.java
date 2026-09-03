@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.*;
 public class ReflectionController {
 
     private final ReflectionService reflectionService;
+    private final com.skala.ailearning.common.AccessGuard accessGuard;
 
-    public ReflectionController(ReflectionService reflectionService) {
+    public ReflectionController(ReflectionService reflectionService,
+                                com.skala.ailearning.common.AccessGuard accessGuard) {
         this.reflectionService = reflectionService;
+        this.accessGuard = accessGuard;
     }
 
     @Operation(
@@ -39,6 +42,7 @@ public class ReflectionController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ReflectionResponse create(@Valid @RequestBody ReflectionRequest request) {
+        accessGuard.requireSelfOrAdmin(request.userId());
         return reflectionService.create(request);
     }
 
@@ -61,6 +65,7 @@ public class ReflectionController {
     })
     @PostMapping("/{reflectionId}/analyze")
     public AnalysisResponse analyze(@PathVariable Long reflectionId) {
+        accessGuard.requireSelfOrAdmin(reflectionService.findOwnerUserId(reflectionId));
         return reflectionService.analyze(reflectionId);
     }
 }

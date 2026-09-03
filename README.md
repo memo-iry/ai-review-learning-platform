@@ -136,11 +136,19 @@ http://localhost:8080/v3/api-docs          OpenAPI JSON
 
 | Method | Endpoint | 응답 | 설명 |
 |---|---|---|---|
+| POST | `/api/auth/login` | 200 · 401 | 로그인 (세션 생성) |
+| GET | `/api/auth/me` | 200 · 401 | 현재 로그인 사용자 |
+| POST | `/api/auth/logout` | 204 | 로그아웃 |
 | GET | `/api/lectures` | 200 | 강의 목록 (최신순) |
 | GET | `/api/lectures/{lectureId}` | 200 · 404 | 강의 상세 |
 | GET | `/api/lectures/{lectureId}/materials` | 200 · 404 | 강의별 자료 |
-| POST | `/api/reflections` | 201 · 400 · 404 | 회고 저장 |
-| POST | `/api/reflections/{reflectionId}/analyze` | 200 · 404 | 이해도 분석 및 복습자료 생성 |
+| POST | `/api/reflections` | 201 · 400 · 403 · 404 | 회고 저장 |
+| POST | `/api/reflections/{reflectionId}/analyze` | 200 · 403 · 404 | 이해도 분석 및 복습자료 생성 |
+| POST | `/api/quizzes/{quizId}/attempts` | 201 · 403 · 404 | Quiz 응시 및 채점 |
+| GET | `/api/users/{userId}/mastery` | 200 · 403 · 404 | 개념별 이해도 |
+| GET | `/api/users/{userId}/reviews` | 200 · 403 · 404 | 복습자료 목록 |
+| GET | `/api/reviews/{reviewId}` | 200 · 403 · 404 | 복습자료 상세 |
+| GET | `/api/admin/overview` | 200 · 401 · 403 | 교육생 이해도 집계 (운영자 전용) |
 
 오류 응답은 형식이 하나입니다.
 
@@ -178,6 +186,46 @@ http://localhost:8080/v3/api-docs          OpenAPI JSON
 
 같은 회고를 다시 제출하거나 다시 분석해도 새 행이 쌓이지 않고 갱신됩니다. 시연 도중 두 번
 눌러도 제약 위반이 나지 않습니다.
+
+## 인증과 접근 통제
+
+로그인하면 서버가 세션을 만들고 쿠키로 사용자를 식별합니다. `userId` 를 파라미터로
+받아 신뢰하지 않습니다 — 받는 순간 그것은 인증이 아니라 요청값이라 위조됩니다.
+
+```
+LEARNER   자기 데이터만 조회·수정 가능. 남의 userId 요청은 403
+ADMIN     교육생 데이터 조회 가능 + /api/admin/** 접근 가능
+```
+
+브라우저에서 호출할 때 `credentials: 'include'` 가 필요합니다.
+
+```js
+fetch(url, { credentials: 'include', ... })
+```
+
+### 통제 스위치
+
+```yaml
+app:
+  security:
+    enforce: ${SECURITY_ENFORCE:false}
+```
+
+프론트에 로그인 화면이 붙기 전까지 `false` 로 둡니다. 이 상태에서는 로그인하지 않아도
+기존 흐름이 그대로 동작합니다. 로그인이 붙으면 `true` 로 바꿉니다.
+
+```
+false   로그인 없이 호출 가능. /api/admin/** 은 그래도 막힘
+true    로그인 없으면 401, 남의 데이터면 403
+```
+
+**운영자 전용 경로는 스위치와 무관하게 항상 막힙니다.** 스위치는 프론트를 기다리는
+임시 조치이고, 프론트는 운영자 API 를 호출하지 않으므로 완화할 이유가 없습니다.
+
+### 범위 밖
+
+세션은 애플리케이션 메모리에 있습니다. 서버가 두 대가 되면 로그인이 유지되지 않으므로
+운영에서는 Redis 세션 저장소나 JWT 가 필요합니다. Spring Security 도입도 함께 검토합니다.
 
 ## 데이터 모델
 
