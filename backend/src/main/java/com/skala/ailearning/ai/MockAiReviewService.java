@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.skala.ailearning.ai.AnalysisResponse.QuizItem;
 import com.skala.ailearning.ai.AnalysisResponse.ReviewMaterial;
+import com.skala.ailearning.common.ConflictException;
 import com.skala.ailearning.material.LectureMaterial;
 import com.skala.ailearning.material.LectureMaterialRepository;
 import com.skala.ailearning.reflection.Reflection;
@@ -47,6 +48,10 @@ public class MockAiReviewService implements AiReviewService {
     @Transactional
     public AnalysisResponse analyze(Long reflectionId) {
         Reflection reflection = reflectionService.getEntity(reflectionId);
+
+        if (analysisRepository.findByReflectionId(reflectionId).isPresent()) {
+            throw new ConflictException("이미 분석이 완료된 회고록입니다.");
+        }
 
         int totalLength = reflection.getUnderstood().length()
                 + reflection.getDifficult().length();

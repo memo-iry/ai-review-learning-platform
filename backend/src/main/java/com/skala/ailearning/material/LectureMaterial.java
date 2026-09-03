@@ -1,7 +1,9 @@
 package com.skala.ailearning.material;
 
 import java.time.LocalDateTime;
+
 import com.skala.ailearning.course.Lecture;
+
 import jakarta.persistence.*;
 
 @Entity

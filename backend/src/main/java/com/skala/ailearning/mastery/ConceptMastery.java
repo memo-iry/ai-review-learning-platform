@@ -1,7 +1,9 @@
 package com.skala.ailearning.mastery;
 
 import java.time.LocalDateTime;
+
 import com.skala.ailearning.user.User;
+
 import jakarta.persistence.*;
 
 @Entity

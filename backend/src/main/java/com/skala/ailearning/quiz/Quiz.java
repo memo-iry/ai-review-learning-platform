@@ -1,10 +1,12 @@
 package com.skala.ailearning.quiz;
 
 import java.time.LocalDateTime;
-import com.skala.ailearning.ai.PersonalizedReview;
+
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import com.skala.ailearning.ai.PersonalizedReview;
 
 @Entity
 @Table(name = "quizzes", uniqueConstraints = @UniqueConstraint(name = "uk_quiz_review", columnNames = "review_id"))

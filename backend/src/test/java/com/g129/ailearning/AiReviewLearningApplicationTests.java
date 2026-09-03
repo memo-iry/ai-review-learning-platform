@@ -61,6 +61,16 @@ class AiReviewLearningApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.reviewMaterial.title").exists());
 
+        mockMvc.perform(post("/api/reflections")
+                        .contentType("application/json")
+                        .content(body))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("이미 이 강의에 작성한 회고록이 있습니다."));
+
+        mockMvc.perform(post("/api/reflections/1/analyze"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("이미 분석이 완료된 회고록입니다."));
+
         assertThat(analysisRepository.count()).isEqualTo(1);
         assertThat(reviewRepository.count()).isEqualTo(1);
         assertThat(quizRepository.count()).isEqualTo(1);

@@ -1,10 +1,12 @@
 package com.skala.ailearning.quiz;
 
 import java.time.LocalDateTime;
-import com.skala.ailearning.user.User;
+
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import com.skala.ailearning.user.User;
 
 @Entity
 @Table(name = "quiz_attempts")

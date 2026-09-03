@@ -3,6 +3,7 @@ package com.skala.ailearning.reflection;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.skala.ailearning.common.ConflictException;
 import com.skala.ailearning.common.NotFoundException;
 import com.skala.ailearning.course.Lecture;
 import com.skala.ailearning.course.LectureRepository;
@@ -31,6 +32,10 @@ public class ReflectionService {
                 .orElseThrow(() -> new NotFoundException("학습자를 찾을 수 없습니다."));
         Lecture lecture = lectureRepository.findById(request.lectureId())
                 .orElseThrow(() -> new NotFoundException("강의를 찾을 수 없습니다."));
+
+        if (reflectionRepository.existsByLearnerIdAndLectureId(learner.getId(), lecture.getId())) {
+            throw new ConflictException("이미 이 강의에 작성한 회고록이 있습니다.");
+        }
 
         Reflection reflection = new Reflection(
                 learner,

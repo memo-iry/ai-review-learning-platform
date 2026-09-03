@@ -1,8 +1,10 @@
 package com.skala.ailearning.reflection;
 
 import java.time.LocalDateTime;
+
 import com.skala.ailearning.course.Lecture;
 import com.skala.ailearning.user.User;
+
 import jakarta.persistence.*;
 
 @Entity
