@@ -53,10 +53,11 @@ backend/src/main/java/com/skala/ailearning/ai/MockAiAnalysisAdapter.java   @Prof
 
 ### 1. DB 접속 정보
 
-`backend/.env` 를 만들고 비밀번호를 채웁니다. 형식은 `.env.example` 에 있습니다.
+`backend/.env` 를 만들고 비밀번호만 채웁니다.
 
 ```bash
-cp .env.example backend/.env
+cd backend
+cp .env.example .env
 ```
 
 ```bash
@@ -74,11 +75,18 @@ DB_PASSWORD=          # 팀에 공유된 값
 
 ```bash
 cd backend
-set -a; . ./.env; set +a
 ./gradlew bootRun
 ```
 
-IntelliJ 에서는 실행 구성의 환경 변수 칸에 `backend/.env` 파일 경로를 지정하면 됩니다.
+`backend/.env` 는 `spring.config.import` 로 자동 로드됩니다. IntelliJ 실행 구성에
+환경 변수를 따로 넣을 필요가 없습니다. `backend` 폴더를 Gradle 프로젝트로 열고
+`BackendApplication` 을 실행하면 됩니다.
+
+`.env` 가 없으면 기동이 이렇게 실패합니다. 로컬 DB 에 조용히 붙는 것보다 낫습니다.
+
+```
+IllegalArgumentException: 'url' must start with "jdbc"
+```
 
 ```
 http://localhost:8080
