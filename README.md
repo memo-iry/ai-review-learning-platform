@@ -21,7 +21,7 @@ Spring AI 또는 별도 RAG 서버로 교체할 수 있도록 `AiReviewService` 
 ## 기술 스택
 
 - Backend: Java 21, Spring Boot 3.3, Spring Data JPA, Flyway, Gradle
-- Frontend: React 18, Vite 5
+- Frontend: Vue 3, Vite 5
 - Database: PostgreSQL 16
 - Local test: H2
 - Infrastructure: Docker Compose
@@ -31,7 +31,7 @@ Spring AI 또는 별도 RAG 서버로 교체할 수 있도록 `AiReviewService` 
 ```text
 ai-review-learning-platform/
 ├── backend/
-│   ├── src/main/java/com/g129/ailearning/
+│   ├── src/main/java/com/skala/ailearning/
 │   │   ├── ai/           # Mock AI/RAG 및 분석 API
 │   │   ├── common/       # 공통 예외 처리
 │   │   ├── config/       # CORS 설정
@@ -47,7 +47,7 @@ ai-review-learning-platform/
 │   └── src/
 │       ├── api/          # Backend API 호출
 │       ├── components/   # 공통 레이아웃
-│       └── pages/        # 대시보드·회고록·분석·복습·성장 화면
+│       └── pages/        # Vue 기반 대시보드·회고록·분석·복습·성장 화면
 ├── docs/erd.dbml         # dbdiagram.io용 ERD
 └── docker-compose.yml
 ```
@@ -162,8 +162,8 @@ Backend 실행 후 [Swagger UI](http://localhost:8080/swagger-ui.html)에서 전
 핵심 교체 지점:
 
 ```text
-backend/src/main/java/com/g129/ailearning/ai/AiReviewService.java
-backend/src/main/java/com/g129/ailearning/ai/MockAiReviewService.java
+backend/src/main/java/com/skala/ailearning/ai/AiReviewService.java
+backend/src/main/java/com/skala/ailearning/ai/MockAiReviewService.java
 ```
 
 ## GitHub 업로드
