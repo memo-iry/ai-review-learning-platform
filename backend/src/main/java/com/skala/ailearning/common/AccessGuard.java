@@ -11,8 +11,13 @@ public class AccessGuard {
     private final HttpServletRequest request;
     private final boolean enforce;
 
+    /**
+     * app.security.enforce 는 기본값을 두지 않는다.
+     * 보안 스위치가 설정 누락으로 조용히 켜지거나 꺼지면 안 된다.
+     * 값이 없으면 기동 단계에서 실패한다.
+     */
     public AccessGuard(HttpServletRequest request,
-                       @Value("${app.security.enforce:true}") boolean enforce) {
+                       @Value("${app.security.enforce}") boolean enforce) {
         this.request = request;
         this.enforce = enforce;
     }
