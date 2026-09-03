@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import AppLayout from './components/AppLayout.vue'
-
+import LandingPage from './pages/LandingPage.vue'
 const route = useRoute()
 
 const currentStep = computed(() => {
@@ -11,10 +11,8 @@ const currentStep = computed(() => {
 </script>
 
 <template>
-    <nav>
-      <RouterLink to="/">login</RouterLink>
-      <RouterLink to="/home">Home</RouterLink>
-    </nav>
-
-    <RouterView />
+  <LandingPage
+    @visit="() => {}"
+    @login="() => {}"
+  />
 </template>
