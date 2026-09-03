@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500;700;900&display=swap");
 /* Reset */
 
 * {
@@ -43,12 +43,55 @@ ol {
   --color-muted: #918d85;
   --color-border: #e4e1db;
   --color-bg: #ffffff;
+
+  /* 컴포넌트가 기대하는 이름에 대한 별칭 */
+  --color-accent: var(--color-primary);
+  --color-accent-strong: #a83e1a; /* hover 시 더 어두운 톤 */
+  --color-accent-soft: #f3e4de;
+  --color-text-muted: var(--color-muted);
+  --color-text-subtle: #b3aea6;
+  --color-surface: var(--color-bg);
+  --color-canvas: #f4f4f5;
+  --color-border-strong: #d0ccc4;
+  --color-track: #e4e1db;
+
+  /* 상태 색상 (없었던 것) */
+  --color-warning: #a45b12;
+  --color-warning-border: #ecd9bf;
+  --color-warning-soft: #fdf8f1;
+
+  /* 타이포그래피 */
+  --font-display: "Noto Serif KR", serif;
+  --font-body: "Noto Serif KR", sans-serif;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+
+  /* 여백 / 형태 */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-pill: 999px;
+
+  --content-max: 680px;
 }
 
 * {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;  /* 기존 규칙과 통합 */
+  box-sizing: border-box; /* 기존 규칙과 통합 */
 }
 
 html,
@@ -58,7 +101,7 @@ body {
 }
 
 body {
-  font-family: 'Noto Serif KR', sans-serif;
+  font-family: "Noto Serif KR", sans-serif;
   color: var(--color-text);
   background: #ffffff;
   -webkit-font-smoothing: antialiased;
@@ -81,7 +124,7 @@ button {
   min-height: 100vh;
 }
 
-.sidebar{
+.sidebar {
   width: 250px;
   flex-shrink: 0;
 
@@ -93,4 +136,9 @@ button {
 .main-content {
   flex: 1;
   padding: 30px;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }

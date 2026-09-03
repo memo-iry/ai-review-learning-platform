@@ -7,16 +7,17 @@ defineProps({
   type: { type: String, default: 'button' },
   disabled: { type: Boolean, default: false },
   block: { type: Boolean, default: false },
+  /** true면 variant와 무관하게 완전히 둥근 모서리(캡슐 형태)로 표시 */
+  rounded: { type: Boolean, default: false },
 })
 </script>
 
 <template>
-  <button
-    class="base-button"
-    :class="[`base-button--${variant}`, `base-button--${size}`, { 'is-block': block }]"
-    :type="type"
-    :disabled="disabled"
-  >
+  <button class="base-button" :class="[
+    `base-button--${variant}`,
+    `base-button--${size}`,
+    { 'is-block': block, 'is-rounded': rounded },
+  ]" :type="type" :disabled="disabled">
     <slot />
   </button>
 </template>
@@ -35,21 +36,35 @@ defineProps({
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
-.base-button--sm { padding: var(--space-2) var(--space-4); font-size: var(--text-sm); }
-.base-button--md { padding: var(--space-3) var(--space-6); font-size: var(--text-md); }
+.base-button--sm {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.base-button--md {
+  padding: var(--space-3) var(--space-6);
+  font-size: var(--text-md);
+}
 
 .base-button--primary {
   background: var(--color-accent);
   color: #fff;
 }
-.base-button--primary:hover:not(:disabled) { background: var(--color-accent-strong); }
+
+.base-button--primary:hover:not(:disabled) {
+  background: var(--color-accent-strong);
+}
 
 .base-button--outline {
   background: var(--color-surface);
   border-color: var(--color-border-strong);
   color: var(--color-text);
 }
-.base-button--outline:hover:not(:disabled) { border-color: var(--color-accent); color: var(--color-accent); }
+
+.base-button--outline:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
 
 .base-button--pill {
   background: var(--color-surface);
@@ -57,7 +72,11 @@ defineProps({
   border-radius: var(--radius-pill);
   color: var(--color-text);
 }
-.base-button--pill:hover:not(:disabled) { border-color: var(--color-accent); color: var(--color-accent); }
+
+.base-button--pill:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
 
 .base-button--ghost {
   background: none;
@@ -65,7 +84,16 @@ defineProps({
   padding-inline: 0;
 }
 
-.is-block { width: 100%; }
+.is-block {
+  width: 100%;
+}
 
-.base-button:disabled { opacity: 0.5; cursor: not-allowed; }
+.is-rounded {
+  border-radius: var(--radius-pill);
+}
+
+.base-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 </style>
