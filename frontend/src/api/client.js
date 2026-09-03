@@ -18,8 +18,8 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-  getCourses: () => request('/courses'),
-  getDocuments: (courseId) => request(`/courses/${courseId}/documents`),
+  getLectures: () => request('/lectures'),
+  getMaterials: (lectureId) => request(`/lectures/${lectureId}/materials`),
   createReflection: (body) => request('/reflections', {
     method: 'POST',
     body: JSON.stringify(body),
@@ -28,4 +28,3 @@ export const api = {
     method: 'POST',
   }),
 }
-

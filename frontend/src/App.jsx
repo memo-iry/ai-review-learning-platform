@@ -8,11 +8,11 @@ import GrowthPage from './pages/GrowthPage.jsx'
 
 export default function App() {
   const [screen, setScreen] = useState('dashboard')
-  const [course, setCourse] = useState(null)
+  const [lecture, setLecture] = useState(null)
   const [analysis, setAnalysis] = useState(null)
 
-  const startCourse = (selectedCourse) => {
-    setCourse(selectedCourse)
+  const startLecture = (selectedLecture) => {
+    setLecture(selectedLecture)
     setScreen('reflection')
   }
 
@@ -31,9 +31,9 @@ export default function App() {
 
   return (
     <Layout currentStep={currentStep}>
-      {screen === 'dashboard' && <DashboardPage onStart={startCourse} />}
-      {screen === 'reflection' && course && (
-        <ReflectionPage course={course} onAnalyzed={completeAnalysis} onBack={() => setScreen('dashboard')} />
+      {screen === 'dashboard' && <DashboardPage onStart={startLecture} />}
+      {screen === 'reflection' && lecture && (
+        <ReflectionPage lecture={lecture} onAnalyzed={completeAnalysis} onBack={() => setScreen('dashboard')} />
       )}
       {screen === 'analysis' && analysis && (
         <AnalysisPage analysis={analysis} onOpenReview={() => setScreen('review')} />
@@ -45,4 +45,3 @@ export default function App() {
     </Layout>
   )
 }
-

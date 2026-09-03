@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { api } from '../api/client.js'
 
 export default function DashboardPage({ onStart }) {
-  const [courses, setCourses] = useState([])
+  const [lectures, setLectures] = useState([])
   const [error, setError] = useState('')
 
   useEffect(() => {
-    api.getCourses().then(setCourses).catch((requestError) => setError(requestError.message))
+    api.getLectures().then(setLectures).catch((requestError) => setError(requestError.message))
   }, [])
 
   return (
@@ -25,17 +25,18 @@ export default function DashboardPage({ onStart }) {
       </section>
 
       <section className="content-section">
-        <h2>수강 중인 교육과정</h2>
+        <h2>강의 목록</h2>
         {error && <p className="error-message">{error}</p>}
         <div className="course-list">
-          {courses.map((course) => (
-            <article className="course-card" key={course.courseId}>
+          {lectures.map((lecture) => (
+            <article className="course-card" key={lecture.lectureId}>
               <div>
                 <span className="tag">진행 중</span>
-                <h3>{course.courseName}</h3>
-                <p>{course.description}</p>
+                <h3>{lecture.title}</h3>
+                <p>{lecture.description}</p>
+                <small>{lecture.lectureDate} {lecture.startTime}~{lecture.endTime}</small>
               </div>
-              <button className="primary-button" onClick={() => onStart(course)}>
+              <button className="primary-button" onClick={() => onStart(lecture)}>
                 강의자료 확인
               </button>
             </article>
@@ -45,4 +46,3 @@ export default function DashboardPage({ onStart }) {
     </>
   )
 }
-

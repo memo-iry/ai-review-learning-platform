@@ -1,62 +1,99 @@
-Table roles {
-  role_id integer [pk, increment]
-  role_name varchar(30) [not null, unique]
-}
-
 Table users {
-  users_id integer [pk, increment]
-  role_id integer [not null]
-  username varchar(50) [not null, unique]
+  user_id bigint [pk, increment]
+  email varchar(255) [not null, unique]
   password varchar(255) [not null]
+  name varchar(100) [not null]
+  role varchar(20) [not null, note: 'LEARNER, ADMIN']
   created_at timestamp [not null]
 }
 
-Table course {
-  course_id integer [pk, increment]
-  instructor_id integer
-  course_name varchar(100) [not null]
-  course_description text
+Table lectures {
+  lecture_id bigint [pk, increment]
+  title varchar(255) [not null]
+  description text
+  lecture_date date [not null]
+  start_time time
+  end_time time
   created_at timestamp [not null]
 }
 
-Table enrollment {
-  enrollment_id integer [pk, increment]
-  users_id integer [not null]
-  course_id integer [not null]
-  enrollment_status varchar(20) [not null]
-  enrolled_at timestamp [not null]
-
-  indexes {
-    (users_id, course_id) [unique]
-  }
-}
-
-Table document {
-  document_id integer [pk, increment]
-  course_id integer [not null]
-  document_name varchar(150) [not null]
-  document_text text [not null]
-  file_url varchar(500)
+Table lecture_materials {
+  material_id bigint [pk, increment]
+  lecture_id bigint [not null]
+  title varchar(255) [not null]
+  material_type varchar(20) [not null, note: 'PDF, FILE, LINK']
+  file_url varchar(1000)
   created_at timestamp [not null]
 }
 
 Table reflections {
-  reflections_id integer [pk, increment]
-  users_id integer [not null]
-  course_id integer [not null]
-  understood_content text [not null]
-  difficult_content text [not null]
-  question_content text
-  reflection_status varchar(20) [not null]
+  reflection_id bigint [pk, increment]
+  user_id bigint [not null]
+  lecture_id bigint [not null]
+  understood text
+  difficult text
+  wants_to_learn text
   created_at timestamp [not null]
-  updated_at timestamp
+  indexes { (user_id, lecture_id) [unique] }
 }
 
-Ref: users.role_id > roles.role_id
-Ref: course.instructor_id > users.users_id
-Ref: enrollment.users_id > users.users_id
-Ref: enrollment.course_id > course.course_id
-Ref: document.course_id > course.course_id
-Ref: reflections.users_id > users.users_id
-Ref: reflections.course_id > course.course_id
+Table ai_analyses {
+  analysis_id bigint [pk, increment]
+  reflection_id bigint [not null, unique]
+  understood_topics json
+  weak_topics json
+  recommended_topics json
+  summary text
+  status varchar(20) [not null, note: 'PENDING, COMPLETED, FAILED']
+  created_at timestamp [not null]
+}
 
+Table personalized_reviews {
+  review_id bigint [pk, increment]
+  analysis_id bigint [not null, unique]
+  title varchar(255) [not null]
+  focus_topics json
+  content json
+  status varchar(20) [not null, note: 'NOT_STARTED, IN_PROGRESS, COMPLETED']
+  created_at timestamp [not null]
+  completed_at timestamp
+}
+
+Table quizzes {
+  quiz_id bigint [pk, increment]
+  review_id bigint [not null, unique]
+  title varchar(255) [not null]
+  questions json [not null]
+  created_at timestamp [not null]
+}
+
+Table quiz_attempts {
+  attempt_id bigint [pk, increment]
+  quiz_id bigint [not null]
+  user_id bigint [not null]
+  answers json
+  score integer
+  correct_count integer [not null, default: 0]
+  total_count integer [not null, default: 0]
+  completed_at timestamp
+}
+
+Table concept_mastery {
+  mastery_id bigint [pk, increment]
+  user_id bigint [not null]
+  concept_name varchar(150) [not null]
+  level integer [not null, note: '1: 인지, 2: 이해, 3: 적용, 4: 구현']
+  score integer
+  updated_at timestamp [not null]
+  indexes { (user_id, concept_name) [unique] }
+}
+
+Ref: lecture_materials.lecture_id > lectures.lecture_id
+Ref: reflections.user_id > users.user_id
+Ref: reflections.lecture_id > lectures.lecture_id
+Ref: ai_analyses.reflection_id > reflections.reflection_id
+Ref: personalized_reviews.analysis_id > ai_analyses.analysis_id
+Ref: quizzes.review_id > personalized_reviews.review_id
+Ref: quiz_attempts.quiz_id > quizzes.quiz_id
+Ref: quiz_attempts.user_id > users.user_id
+Ref: concept_mastery.user_id > users.user_id

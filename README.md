@@ -35,8 +35,10 @@ ai-review-learning-platform/
 │   │   ├── ai/           # Mock AI/RAG 및 분석 API
 │   │   ├── common/       # 공통 예외 처리
 │   │   ├── config/       # CORS 설정
-│   │   ├── course/       # 교육과정과 수강
-│   │   ├── material/     # 강의자료
+│   │   ├── course/       # 일자별 강의
+│   │   ├── material/     # 강의별 자료
+│   │   ├── mastery/      # 개념별 학습 수준
+│   │   ├── quiz/         # 퀴즈 및 응시
 │   │   ├── reflection/   # 회고록
 │   │   ├── role/         # 권한
 │   │   └── user/         # 사용자
@@ -119,8 +121,8 @@ Flyway가 서버 시작 시 다음 데이터를 자동으로 생성합니다.
 | 강사 사용자 | `instructor` |
 | 학습자 사용자 | `learner` |
 | 데모 학습자 ID | `2` |
-| 교육과정 | `IT Full Stack` |
-| 강의자료 | `Spring Boot REST API`, `React 상태 관리` |
+| 강의 | `Spring Boot REST API`, `React 상태 관리` |
+| 강의자료 | PDF 및 외부 링크 |
 
 `password` 값은 DB 구조 확인을 위한 예시입니다. 실제 로그인 기능을 구현할 때는
 Spring Security와 BCrypt를 적용해야 합니다.
@@ -131,8 +133,8 @@ Backend 실행 후 [Swagger UI](http://localhost:8080/swagger-ui.html)에서 전
 
 | Method | Endpoint | 설명 |
 |---|---|---|
-| GET | `/api/courses` | 교육과정 목록 조회 |
-| GET | `/api/courses/{courseId}/documents` | 과정별 강의자료 조회 |
+| GET | `/api/lectures` | 강의 목록 조회 |
+| GET | `/api/lectures/{lectureId}/materials` | 강의별 자료 조회 |
 | POST | `/api/reflections` | 회고록 등록 |
 | GET | `/api/reflections/{reflectionId}` | 회고록 상세 조회 |
 | POST | `/api/reflections/{reflectionId}/analyze` | Mock 이해도 분석 및 복습자료 생성 |
@@ -142,10 +144,10 @@ Backend 실행 후 [Swagger UI](http://localhost:8080/swagger-ui.html)에서 전
 ```json
 {
   "userId": 2,
-  "courseId": 1,
-  "understoodContent": "Controller에서 요청을 받는 흐름은 이해했습니다.",
-  "difficultContent": "Service와 Repository의 역할 구분이 아직 어렵습니다.",
-  "questionContent": "DTO는 어느 계층에서 변환해야 하나요?"
+  "lectureId": 1,
+  "understood": "Controller에서 요청을 받는 흐름은 이해했습니다.",
+  "difficult": "Service와 Repository의 역할 구분이 아직 어렵습니다.",
+  "wantsToLearn": "DTO를 어느 계층에서 변환하는지 더 공부하고 싶습니다."
 }
 ```
 
