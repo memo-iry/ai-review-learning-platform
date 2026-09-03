@@ -12,6 +12,7 @@ import EmptyState from '@/components/common/EmptyState.vue'
 import QuizOptionRow from '@/components/quiz/QuizOptionRow.vue'
 import QuizTutorPanel from '@/components/quiz/QuizTutorPanel.vue'
 import QuizStatusCard from '@/components/quiz/QuizStatusCard.vue'
+import AppLayout from '@/components/AppLayout.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -79,6 +80,9 @@ async function submitAnswers() {
 </script>
 
 <template>
+  <section>
+    <AppLayout />
+  </section>
   <div class="quiz-attempt-page">
     <div class="quiz-attempt-page__topbar">
       <TagBadge>이해도 확인 Quiz</TagBadge>
@@ -87,11 +91,7 @@ async function submitAnswers() {
 
     <LoadingSpinner v-if="loading" label="퀴즈를 불러오는 중이에요" />
 
-    <EmptyState
-      v-else-if="!quiz || !currentQuestion"
-      title="문항을 찾을 수 없습니다"
-      description="퀴즈 목록으로 돌아가 다시 시도해 주세요."
-    />
+    <EmptyState v-else-if="!quiz || !currentQuestion" title="문항을 찾을 수 없습니다" description="퀴즈 목록으로 돌아가 다시 시도해 주세요." />
 
     <div v-else class="quiz-attempt-page__body">
       <div class="quiz-attempt-page__main">
@@ -109,15 +109,9 @@ async function submitAnswers() {
           <h2 class="quiz-attempt-page__prompt">{{ currentQuestion.question }}</h2>
 
           <div class="quiz-attempt-page__options">
-            <QuizOptionRow
-              v-for="(option, optionIndex) in currentQuestion.options"
-              :key="optionIndex"
-              :number="optionIndex + 1"
-              :label="option"
-              :selected="answers[currentIndex] === optionIndex"
-              :name="`question-${currentIndex}`"
-              @select="selectAnswer(optionIndex)"
-            />
+            <QuizOptionRow v-for="(option, optionIndex) in currentQuestion.options" :key="optionIndex"
+              :number="optionIndex + 1" :label="option" :selected="answers[currentIndex] === optionIndex"
+              :name="`question-${currentIndex}`" @select="selectAnswer(optionIndex)" />
           </div>
         </BaseCard>
 
