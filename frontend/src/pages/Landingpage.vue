@@ -1,9 +1,14 @@
 <script setup>
+import { useRouter } from 'vue-router'
 import booksstack from '../assets/books-stack.png'
 import logoMark from '../assets/logo-mark.png'
 import arrowIcon from '../assets/arrow-icon.png'
 
-defineEmits(['visit', 'login'])
+const router = useRouter()
+
+const loginhandler = () => {
+  router.push({ name: 'login' })
+}
 </script>
 
 <template>
@@ -20,12 +25,12 @@ defineEmits(['visit', 'login'])
           복습,<br />이제<br />어렵지<br />않습니다
         </h1>
 
-        <button class="btn btn--cta" type="button" @click="$emit('visit')">
+        <button class="btn btn--cta" type="button" @click="loginhandler">
           회고록 작성하기
         </button>
       </div>
 
-      <button class="btn btn--login" type="button" @click="$emit('login')">
+      <button class="btn btn--login" type="button" @click="loginhandler">
          <span class="btn--login__text">LOGIN</span>
         <img :src="arrowIcon" alt="" class="btn__icon" aria-hidden="true" />
       </button>

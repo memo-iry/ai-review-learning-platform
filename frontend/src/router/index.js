@@ -7,6 +7,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'landing',
+      component: () => import('../pages/LandingPage.vue'),
+    },
+    {
+      path: '/login',
       name: 'login',
       component: () => import('../pages/LoginPage.vue'),
       meta: {
@@ -14,70 +19,58 @@ const router = createRouter({
       },
     },
     {
-      path: '/home',
-      name: 'home',
-      component: () => import('../pages/HomePage.vue'),
-      redirect: { name: 'dashboard' },
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../pages/DashboardPage.vue'),
       meta: {
-        step: '메인페이지',
+        step: '대시보드',
       },
-      children: [
-        {
-          path: '',
-          name: 'dashboard',
-          component: () => import('../pages/DashboardPage.vue'),
-          meta: {
-            step: '대시보드',
-          },
-        },
-        {
-          // 실제 주소: /home/reflection
-          path: 'reflection/:lectureId',
-          name: 'reflection',
-          component: () => import('../pages/ReflectionPage.vue'),
-          meta: {
-            step: '회고록',
-            requiresLecture: true,
-          },
-        },
-        {
-          // 실제 주소: /home/analysis
-          path: 'analysis',
-          name: 'analysis',
-          component: () => import('../pages/AnalysisPage.vue'),
-          meta: {
-            step: 'AI 분석',
-            requiresAnalysis: true,
-          },
-        },
-        {
-          // 실제 주소: /home/review
-          path: 'review',
-          name: 'review',
-          component: () => import('../pages/ReviewPage.vue'),
-          meta: {
-            step: '복습자료',
-            requiresAnalysis: true,
-          },
-        },
-        {
-          // 실제 주소: /home/growth
-          path: 'growth',
-          name: 'growth',
-          component: () => import('../pages/GrowthPage.vue'),
-          meta: {
-            step: '내 성장',
-            requiresAnalysis: true,
-          },
-        },
-      ],
+    },
+    {
+      // 실제 주소: /home/reflection
+      path: '/reflection/:lectureId',
+      name: 'reflection',
+      component: () => import('../pages/ReflectionPage.vue'),
+      meta: {
+        step: '회고록',
+        requiresLecture: true,
+      },
+    },
+    {
+      // 실제 주소: /home/analysis
+      path: '/analysis',
+      name: 'analysis',
+      component: () => import('../pages/AnalysisPage.vue'),
+      meta: {
+        step: 'AI 분석',
+        requiresAnalysis: true,
+      },
+    },
+    {
+      // 실제 주소: /home/review
+      path: '/review',
+      name: 'review',
+      component: () => import('../pages/ReviewPage.vue'),
+      meta: {
+        step: '복습자료',
+        requiresAnalysis: true,
+      },
+    },
+    {
+      // 실제 주소: /home/growth
+      path: '/growth',
+      name: 'growth',
+      component: () => import('../pages/GrowthPage.vue'),
+      meta: {
+        step: '내 성장',
+        requiresAnalysis: true,
+      },
     },
     {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },
   ],
-
   scrollBehavior() {
     return { top: 0 }
   },
