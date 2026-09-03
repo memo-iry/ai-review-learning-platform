@@ -1,12 +1,12 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { api } from '../api/client.js'
-import { learningState, completeAnalysis } from '../stores/learning.js'
+import { learningState } from '../stores/learning.js'
 
 const route = useRoute()
 const router = useRouter()
-const lecture = computed(() => learningState.lecture)
+const lecture = learningState.lecture
 const materials = ref([])
 const loading = ref(false)
 const error = ref('')
@@ -21,17 +21,13 @@ async function submit() {
   loading.value = true
   error.value = ''
   try {
-    const reflection = await api.createReflection({
-      userId: learningState.userId,
-      lectureId: Number(route.params.lectureId),
-      ...form,
-    })
+    const reflection = await api.createReflection({ userId: 2, lectureId: Number(route.params.lectureId), ...form })
     const analysis = await api.analyzeReflection(reflection.reflectionId)
     if (!analysis.reviewMaterial) {
       error.value = analysis.weaknessSummary
       return
     }
-    completeAnalysis(reflection, analysis)
+    learningState.analysis = analysis
     router.push({ name: 'analysis' })
   } catch (requestError) {
     error.value = requestError.message
@@ -43,7 +39,7 @@ async function submit() {
 
 <template>
   <button class="text-button" @click="router.push({ name: 'dashboard' })">← 대시보드</button>
-  <section class="page-heading"><div><p class="eyebrow">{{ lecture?.title }}</p><h1>강의자료를 확인하고 회고록을 작성하세요.</h1></div></section>
+  <section class="page-heading"><div><p class="eyebrow">{{ lecture.title }}</p><h1>강의자료를 확인하고 회고록을 작성하세요.</h1></div></section>
   <div class="two-column">
     <section class="panel">
       <h2>강의자료</h2>

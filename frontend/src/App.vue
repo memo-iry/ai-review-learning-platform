@@ -11,12 +11,10 @@ const currentStep = computed(() => {
 </script>
 
 <template>
-  <AppLayout :current-step="currentStep">
     <nav>
       <RouterLink to="/">login</RouterLink>
       <RouterLink to="/home">Home</RouterLink>
     </nav>
 
     <RouterView />
-  </AppLayout>
 </template>

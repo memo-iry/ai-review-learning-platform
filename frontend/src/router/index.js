@@ -21,10 +21,9 @@ const router = createRouter({
       meta: {
         step: '메인페이지',
       },
-
       children: [
         {
-          path: 'dashboard',
+          path: '',
           name: 'dashboard',
           component: () => import('../pages/DashboardPage.vue'),
           meta: {
@@ -33,7 +32,7 @@ const router = createRouter({
         },
         {
           // 실제 주소: /home/reflection
-          path: 'reflection',
+          path: 'reflection/:lectureId',
           name: 'reflection',
           component: () => import('../pages/ReflectionPage.vue'),
           meta: {
