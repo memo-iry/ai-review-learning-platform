@@ -12,7 +12,13 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
-      maximum-pool-size: 5
+      # Supabase Session pooler 의 최대 클라이언트가 15개다.
+      # 조원 5명이 각자 로컬에서 띄우므로 인스턴스당 2개로 묶는다.
+      # 넘기면 EMAXCONNSESSION 으로 기동 자체가 실패한다.
+      maximum-pool-size: 2
+      minimum-idle: 1
+      idle-timeout: 30000
+      max-lifetime: 600000
 
   jpa:
     hibernate:
