@@ -27,6 +27,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/courses',
+      name: 'courses',
+      component: () => import('../pages/CourselistPage.vue'),
+      meta: {
+        step: '강의 목록',
+      },
+    },
+    {
       // 실제 주소: /home/reflection
       path: "/reflection/:lectureId",
       name: "reflection",

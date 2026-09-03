@@ -4,6 +4,11 @@ import { useRouter } from 'vue-router'
 import { api } from '../api/client.js'
 import { learningState, selectLecture } from '../stores/learning.js'
 import AppLayout from '../components/AppLayout.vue'
+import TodayStudy from '../components/common/TodayStudy.vue'
+import WrittenReflection from '../components/common/WrittenReflection.vue'
+import WeeklyReflectionChart from '../components/common/WeeklyReflectionChart.vue'
+import WeaknessAnalysis from '../components/common/WeaknessAnalysis.vue'
+import LearningHistory from '../components/common/LearningHistory.vue'
 
 const LEVEL_NAMES = ['', '인지', '이해', '적용', '구현']
 
@@ -35,77 +40,135 @@ onMounted(async () => {
   }
 })
 
+const weeklyRecords = [
+  { day: '월', count: 4, completed: true },
+  { day: '화', count: 6, completed: true },
+  { day: '수', count: 2, completed: false },
+  { day: '목', count: 5, completed: true },
+  { day: '금', count: 0, completed: false },
+  { day: '토', count: 1, completed: false },
+  { day: '일', count: 3, completed: false },
+]
+
+const weaknesses = [
+  {
+    title: 'UX 리서치 방법론',
+    description: '실습 인터뷰 분석 보조 자료로 보강',
+    score: 72,
+  },
+  {
+    title: '알고리즘 기초',
+    description: '자료구조 개념 학습 필요',
+    score: 68,
+  },
+]
+const dateParts = new Intl.DateTimeFormat('ko-KR', {
+  month: '2-digit',
+  day: '2-digit',
+  weekday: 'long',
+}).formatToParts(new Date())
+
+const getDatePart = (type) => {
+  return dateParts.find((part) => part.type === type)?.value
+}
+
+const currentDate = `${getDatePart('month')}/${getDatePart('day')}`
+const currentWeekday = getDatePart('weekday')
+
+const quizRecords = [
+  {
+    title: '데이터 분석을 위한 Python 이해',
+    score: 88,
+  },
+  {
+    title: 'Java, SpringBoot, Rest API 구현',
+    score: 76,
+  },
+  {
+    title: 'Agile 방법론 및 MSA 개발',
+    score: 100,
+  },
+]
 </script>
 
 <template>
   <section>
     <AppLayout />
   </section>
-  <main class="main-content">
-    <section class="page-heading">
-      <div>
-        <p class="eyebrow">학습 대시보드</p>
-        <h1>오늘 배운 내용을 회고하고 복습해 보세요.</h1>
-      </div>
-    </section>
-  
-    <section class="summary-grid">
-      <article class="summary-card">
-        <span>현재 학습 수준</span>
-        <strong>{{ levelLabel }}</strong>
-      </article>
-  
-      <article class="summary-card">
-        <span>학습 진도</span>
-        <strong>{{ mastery ? mastery.progressRate + '%' : '-' }}</strong>
-        <small v-if="mastery">회고 {{ mastery.reviewedLectures }} / 강의 {{ mastery.totalLectures }}</small>
-      </article>
-  
-      <article class="summary-card">
-        <span>평균 이해도</span>
-        <strong>{{ mastery ? mastery.averageScore + '%' : '-' }}</strong>
-        <small v-if="mastery">개념 {{ mastery.conceptCount }}개 기준</small>
-      </article>
-    </section>
-  
-    <section v-if="mastery && mastery.weakest.length" class="content-section">
-      <h2>복습이 필요한 개념</h2>
-  
-      <div class="weak-list">
-        <article
-          v-for="concept in mastery.weakest"
-          :key="concept.conceptName"
-          class="weak-card"
-        >
-          <strong>{{ concept.conceptName }}</strong>
-          <span>{{ concept.score }}%</span>
-        </article>
-      </div>
-    </section>
-  
-    <section class="content-section">
-      <h2>강의 목록</h2>
-  
-      <p v-if="error" class="error-message">{{ error }}</p>
-  
-      <div class="course-list">
-        <article
-          v-for="item in lectures"
-          :key="item.lectureId"
-          class="course-card"
-        >
-          <div>
-            <span class="tag">진행 중</span>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.description }}</p>
-            <small>{{ item.lectureDate }} {{ item.startTime }}~{{ item.endTime }}</small>
-          </div>
-  
-          <button class="primary-button" @click="startLecture(item)">
-            강의자료 확인
-          </button>
-        </article>
-      </div>
-    </section>
-  </main>
+  <section class="dashboard-grid">
+    <div class="dashboard-date">
+      {{ currentDate }} {{ currentWeekday }}
+      <hr />
+    </div>
+
+    <div class="today-lesson">
+      <TodayStudy />
+    </div>
+
+    <div class="reflection-card">
+      <WrittenReflection />
+    </div>
+
+    <div class="recent-record">
+      <LearningHistory
+        :records="quizRecords"
+      />
+    </div>
+
+    <div class="emotion-analysis">
+      <WeeklyReflectionChart
+        :records="weeklyRecords"
+        :completion-rate="15"
+      />
+    </div>
+
+    <div class="weakness-analysis">
+      <WeaknessAnalysis
+        :weaknesses="weaknesses"
+      />
+    </div>
+  </section>
 </template>
+
+<style scoped>
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: auto 140px 190px 280px;
+  grid-template-areas:
+    "date date"
+    "today reflection"
+    "record record"
+    "emotion weakness";
+  gap: 10px;
+  align-content: start;
+}
+
+.dashboard-date {
+  grid-area: date;
+}
+
+.today-lesson {
+  grid-area: today;
+}
+
+.reflection-card {
+  grid-area: reflection;
+}
+
+.recent-record {
+  grid-area: record;
+}
+
+.learning-progress {
+  grid-area: progress;
+}
+
+.emotion-analysis {
+  grid-area: emotion;
+}
+
+.weakness-analysis {
+  grid-area: weakness;
+}
+</style>

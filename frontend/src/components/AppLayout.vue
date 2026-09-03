@@ -12,12 +12,10 @@ const username = 'STUDENT USER'
       </div>
 
       <nav class="step-list">
-        <RouterLink to="/" class="step">Landing</RouterLink>
-        <RouterLink to="/login" class="step">Login</RouterLink>
-        <RouterLink to="/dashboard" class="step">Dashboard</RouterLink>
-        <RouterLink to="/analysis" class="step">Analysis</RouterLink>
-        <RouterLink to="/review" class="step">Review</RouterLink>
-        <RouterLink to="/growth" class="step">Growth</RouterLink>
+        <RouterLink to="/reflection/:lectureId" class="step">회고록 작성</RouterLink>
+        <RouterLink to="/courses" class="step">강의 목록</RouterLink>
+        <RouterLink to="/analysis" class="step">회고 기록</RouterLink>
+        <RouterLink to="/review" class="step">QUIZ</RouterLink>
       </nav>
     </aside>
 
