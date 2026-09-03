@@ -119,6 +119,13 @@ ai-review-learning-platform/
 
 ## API
 
+Backend 실행 후 Swagger UI 에서 전체 명세를 보고 직접 요청할 수 있습니다.
+
+```
+http://localhost:8080/swagger-ui.html      Swagger UI
+http://localhost:8080/v3/api-docs          OpenAPI JSON
+```
+
 | Method | Endpoint | 응답 | 설명 |
 |---|---|---|---|
 | GET | `/api/lectures` | 200 | 강의 목록 (최신순) |

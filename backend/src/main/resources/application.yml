@@ -25,6 +25,14 @@ logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
 app:
   cors:
     allowed-origin: ${FRONTEND_ORIGIN:http://localhost:5173}
