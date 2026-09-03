@@ -12,7 +12,7 @@ defineProps({
 <template>
   <BaseCard class="weakness-analysis-card">
     <h3 class="card-title">
-      분별해야 하는 부분
+      분발해야 하는 부분
     </h3>
 
     <p class="card-description">

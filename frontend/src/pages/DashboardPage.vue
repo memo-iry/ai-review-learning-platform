@@ -8,7 +8,7 @@ import TodayStudy from '../components/common/TodayStudy.vue'
 import WrittenReflection from '../components/common/WrittenReflection.vue'
 import WeeklyReflectionChart from '../components/common/WeeklyReflectionChart.vue'
 import WeaknessAnalysis from '../components/common/WeaknessAnalysis.vue'
-import LearningHistory from '../components/common/LearningHistory.vue'
+import WeeklyClassCalendar from '../components/common/WeeklyClassCalendar.vue'
 
 const LEVEL_NAMES = ['', '인지', '이해', '적용', '구현']
 
@@ -110,8 +110,8 @@ const quizRecords = [
     </div>
 
     <div class="recent-record">
-      <LearningHistory
-        :records="quizRecords"
+      <WeeklyClassCalendar
+        :lectures="lectures"
       />
     </div>
 
@@ -134,7 +134,7 @@ const quizRecords = [
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: auto 140px 190px 280px;
+  grid-template-rows: auto 120px 220px 280px;
   grid-template-areas:
     "date date"
     "today reflection"

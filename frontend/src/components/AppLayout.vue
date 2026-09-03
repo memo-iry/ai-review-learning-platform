@@ -14,8 +14,8 @@ const username = 'STUDENT USER'
       <nav class="step-list">
         <RouterLink to="/reflection/:lectureId" class="step">회고록 작성</RouterLink>
         <RouterLink to="/courses" class="step">강의 목록</RouterLink>
-        <RouterLink to="/analysis" class="step">회고 기록</RouterLink>
-        <RouterLink to="/review" class="step">QUIZ</RouterLink>
+        <RouterLink to="/history" class="step">회고 기록</RouterLink>
+        <RouterLink to="/quiz" class="step">QUIZ</RouterLink>
       </nav>
     </aside>
 
