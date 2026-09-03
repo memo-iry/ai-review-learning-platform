@@ -30,17 +30,52 @@ public class QuizService {
     private final ObjectMapper objectMapper;
 
     public QuizService(QuizRepository quizRepository,
-                       QuizAttemptRepository attemptRepository,
-                       UserRepository userRepository,
-                       ConceptMasteryRepository masteryRepository,
-                       MasteryService masteryService,
-                       ObjectMapper objectMapper) {
+            QuizAttemptRepository attemptRepository,
+            UserRepository userRepository,
+            ConceptMasteryRepository masteryRepository,
+            MasteryService masteryService,
+            ObjectMapper objectMapper) {
         this.quizRepository = quizRepository;
         this.attemptRepository = attemptRepository;
         this.userRepository = userRepository;
         this.masteryRepository = masteryRepository;
         this.masteryService = masteryService;
         this.objectMapper = objectMapper;
+    }
+
+    @Transactional(readOnly = true)
+    public QuizResponse getQuiz(Long quizId) {
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new NotFoundException("Quiz 를 찾을 수 없습니다: " + quizId));
+
+        return toResponse(quiz);
+    }
+
+    @Transactional(readOnly = true)
+    public List<QuizResponse> findAllByUser(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다: " + userId));
+
+        return quizRepository.findAllByUserId(userId).stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public Long findOwnerUserId(Long quizId) {
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new NotFoundException("Quiz 를 찾을 수 없습니다: " + quizId));
+
+        return quiz.getReview().getAnalysis().getReflection().getUser().getUserId();
+    }
+
+    private QuizResponse toResponse(Quiz quiz) {
+        List<QuizResponse.QuestionItem> questions = readQuestions(quiz).stream()
+                .map(item -> new QuizResponse.QuestionItem(
+                        item.conceptName(), item.question(), item.options()))
+                .toList();
+
+        return new QuizResponse(quiz.getQuizId(), quiz.getTitle(), quiz.getCreatedAt(), questions);
     }
 
     @Transactional
