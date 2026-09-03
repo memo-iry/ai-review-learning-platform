@@ -49,8 +49,14 @@ public class MockAiAnalysisAdapter implements AiAnalysisPort {
                 command.lectureTitle() + " 맞춤 복습",
                 corePoints(weak),
                 weak.getFirst().exampleCode(),
-                weak.stream().limit(3).map(Concept::quiz).toList()
+                weak.stream().limit(3).map(MockAiAnalysisAdapter::toQuizItem).toList()
         );
+    }
+
+    private static AiAnalysisResult.QuizItem toQuizItem(Concept concept) {
+        Concept.Question q = concept.question();
+        return new AiAnalysisResult.QuizItem(
+                concept.name(), q.text(), q.options(), q.answerIndex(), q.explanation());
     }
 
     private List<Concept> match(String text) {

@@ -411,3 +411,55 @@ summary {
   justify-items: start;
   padding: 48px 0;
 }
+
+.quiz-list {
+  display: grid;
+  gap: 20px;
+}
+
+.quiz-item {
+  display: grid;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid #dfe4ee;
+  border-radius: 12px;
+}
+
+.quiz-item legend {
+  font-weight: 600;
+  padding: 0 4px;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.quiz-score {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.quiz-correct {
+  border-color: #9ed3ae;
+  background: #f4fbf6;
+}
+
+.quiz-wrong {
+  border-color: #f0b8b8;
+  background: #fdf5f5;
+}
+
+.quiz-explanation {
+  color: #697386;
+}
+
+.mastery-changes {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+  background: #f6f8fc;
+  border-radius: 12px;
+}

@@ -28,4 +28,8 @@ export const api = {
     method: 'POST',
   }),
   getMastery: (userId) => request(`/users/${userId}/mastery`),
+  submitQuiz: (quizId, body) => request(`/quizzes/${quizId}/attempts`, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  }),
 }

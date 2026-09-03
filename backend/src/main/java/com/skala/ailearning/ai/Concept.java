@@ -7,8 +7,16 @@ record Concept(
         List<String> aliases,
         List<String> reviewPoints,
         String exampleCode,
-        AiAnalysisResult.QuizItem quiz
+        Question question
 ) {
+    record Question(
+            String text,
+            List<String> options,
+            int answerIndex,
+            String explanation
+    ) {
+    }
+
     boolean matches(String text) {
         String lower = text.toLowerCase();
         if (containsToken(lower, name)) {
@@ -61,9 +69,16 @@ record Concept(
                             .call()
                             .content();
                     """,
-                    new AiAnalysisResult.QuizItem(
+                    new Question(
                             "RAG 파이프라인에서 검색 결과가 비어 있을 때 가장 먼저 확인할 것은?",
-                            "질문 임베딩과 문서 임베딩이 같은 모델·같은 차원으로 만들어졌는지 확인한다.")
+                            List.of(
+                                    "모델의 temperature 설정",
+                                    "질문과 문서가 같은 임베딩 모델로 만들어졌는지",
+                                    "시스템 메시지의 길이",
+                                    "응답 토큰 상한"
+                            ),
+                            1,
+                            "임베딩 모델이 다르면 벡터 공간이 달라져 유사도 자체가 의미를 잃는다. 차원과 모델을 먼저 맞춘다.")
             ),
             new Concept(
                     "Embedding",
@@ -77,9 +92,16 @@ record Concept(
                     float[] vector = embeddingModel.embed("환불은 며칠 걸리나요");
                     System.out.println(vector.length);   // 1536
                     """,
-                    new AiAnalysisResult.QuizItem(
+                    new Question(
                             "RAG 에서 Embedding 의 역할로 가장 적절한 것은?",
-                            "문서와 질문을 벡터 공간에 표현해 의미 기반으로 비교할 수 있게 한다.")
+                            List.of(
+                                    "AI 응답을 생성한다",
+                                    "문서를 벡터 공간에 표현한다",
+                                    "프롬프트를 저장한다",
+                                    "HTTP 요청을 처리한다"
+                            ),
+                            1,
+                            "임베딩은 텍스트를 숫자 벡터로 바꿔 의미 기반 비교를 가능하게 한다. 생성은 LLM 의 몫이다.")
             ),
             new Concept(
                     "Chunking",
@@ -94,9 +116,16 @@ record Concept(
                     List<Document> chunks = splitter.apply(documents);
                     vectorStore.add(chunks);
                     """,
-                    new AiAnalysisResult.QuizItem(
+                    new Question(
                             "Chunk 크기를 지나치게 작게 잡으면 생기는 문제는?",
-                            "문맥이 끊겨 검색은 되더라도 답변에 필요한 정보가 조각 안에 없게 된다.")
+                            List.of(
+                                    "임베딩 비용이 급격히 줄어든다",
+                                    "문맥이 끊겨 답변에 필요한 정보가 조각 안에 없게 된다",
+                                    "벡터 차원이 함께 줄어든다",
+                                    "검색 자체가 동작하지 않는다"
+                            ),
+                            1,
+                            "검색은 되지만 조각 안에 맥락이 없어 근거로 쓸 수 없게 된다.")
             ),
             new Concept(
                     "Vector Store",
@@ -114,9 +143,16 @@ record Concept(
                                     .similarityThreshold(0.5)
                                     .build());
                     """,
-                    new AiAnalysisResult.QuizItem(
-                            "유사도 임계값을 높이면 검색 결과는 어떻게 되는가?",
-                            "관련성이 확실한 문서만 남아 결과 수가 줄고, 너무 높이면 아무것도 나오지 않는다.")
+                    new Question(
+                            "유사도 임계값(similarityThreshold)을 높이면 검색 결과는 어떻게 되는가?",
+                            List.of(
+                                    "관련성이 확실한 문서만 남아 결과 수가 줄어든다",
+                                    "결과 수가 늘어난다",
+                                    "임베딩이 다시 계산된다",
+                                    "검색 속도가 느려진다"
+                            ),
+                            0,
+                            "너무 높이면 아무것도 나오지 않는다. 0.5 부근에서 시작해 실제 결과를 보며 조정한다.")
             ),
             new Concept(
                     "Tool Calling",
@@ -133,9 +169,16 @@ record Concept(
                         return repository.findByTitleContaining(keyword);
                     }
                     """,
-                    new AiAnalysisResult.QuizItem(
-                            "Tool Calling 에서 실제 도구를 실행하는 주체는?",
-                            "모델이 아니라 애플리케이션이다. 모델은 호출할 도구와 인자를 결정할 뿐이다.")
+                    new Question(
+                            "Tool Calling 에서 도구를 실제로 실행하는 주체는?",
+                            List.of(
+                                    "LLM 이 직접 실행한다",
+                                    "애플리케이션이 실행한다",
+                                    "벡터 스토어가 실행한다",
+                                    "프롬프트 템플릿이 실행한다"
+                            ),
+                            1,
+                            "모델은 호출할 도구와 인자를 정할 뿐이다. 그래서 권한 검사를 실행하는 쪽에 둬야 한다.")
             ),
             new Concept(
                     "Docker",
@@ -151,9 +194,16 @@ record Concept(
                     COPY build/libs/*.jar app.jar
                     ENTRYPOINT ["java", "-jar", "app.jar"]
                     """,
-                    new AiAnalysisResult.QuizItem(
+                    new Question(
                             "Dockerfile 에서 의존성 설치를 소스 복사보다 앞에 두는 이유는?",
-                            "소스만 바뀌었을 때 의존성 레이어 캐시를 재사용해 빌드 시간을 줄이기 위해서다.")
+                            List.of(
+                                    "최종 이미지 크기가 줄어든다",
+                                    "소스만 바뀌었을 때 의존성 레이어 캐시를 재사용한다",
+                                    "컨테이너 실행 속도가 빨라진다",
+                                    "포트 충돌을 막는다"
+                            ),
+                            1,
+                            "레이어는 위에서부터 캐시된다. 자주 바뀌는 것을 뒤에 둘수록 빌드가 빨라진다.")
             ),
             new Concept(
                     "Kubernetes",
@@ -174,9 +224,16 @@ record Concept(
                             - name: app
                               image: myapp:1.0
                     """,
-                    new AiAnalysisResult.QuizItem(
+                    new Question(
                             "Deployment 의 replicas 를 3 으로 바꾸면 무슨 일이 일어나는가?",
-                            "컨트롤러가 실제 Pod 수를 3 이 되도록 새로 만들거나 줄인다.")
+                            List.of(
+                                    "기존 Pod 가 모두 삭제된 뒤 새로 만들어진다",
+                                    "컨트롤러가 실제 Pod 수를 3 이 되도록 맞춘다",
+                                    "Service 의 주소가 함께 바뀐다",
+                                    "노드가 3대로 늘어난다"
+                            ),
+                            1,
+                            "선언한 상태와 실제 상태의 차이를 컨트롤러가 계속 메운다. 이것이 선언형 배포다.")
             ),
             new Concept(
                     "Vue",
@@ -193,9 +250,16 @@ record Concept(
                       lectures.value = await api.getLectures()
                     })
                     """,
-                    new AiAnalysisResult.QuizItem(
-                            "자식 컴포넌트에서 부모의 상태를 바꾸려면?",
-                            "직접 바꾸지 않고 emit 으로 이벤트를 올려 부모가 바꾸게 한다.")
+                    new Question(
+                            "자식 컴포넌트에서 부모의 상태를 바꾸려면 어떻게 해야 하는가?",
+                            List.of(
+                                    "props 를 직접 수정한다",
+                                    "emit 으로 이벤트를 올려 부모가 바꾸게 한다",
+                                    "computed 에 값을 대입한다",
+                                    "ref 를 전역에 등록한다"
+                            ),
+                            1,
+                            "데이터는 아래로, 이벤트는 위로. props 를 직접 고치면 흐름이 끊긴다.")
             ),
             new Concept(
                     "Vue Router",
@@ -216,17 +280,22 @@ record Concept(
                         children: [
                           { path: 'analysis', name: 'analysis',
                             component: () => import('../pages/AnalysisPage.vue') },
-                          { path: 'review', name: 'review',
-                            component: () => import('../pages/ReviewPage.vue') },
                         ],
                       },
                     ]
 
                     router.push({ name: 'analysis' })   // /home/analysis
                     """,
-                    new AiAnalysisResult.QuizItem(
-                            "children 에 적는 path 앞에 슬래시를 붙여야 하는가?",
-                            "붙이지 않는다. 슬래시를 붙이면 부모 경로를 무시한 절대 경로가 된다.")
+                    new Question(
+                            "children 에 적는 path 앞에 슬래시를 붙이면 어떻게 되는가?",
+                            List.of(
+                                    "부모 경로 아래 상대 경로로 연결된다",
+                                    "부모 경로를 무시한 절대 경로가 된다",
+                                    "라우트 이름이 자동으로 생성된다",
+                                    "아무 차이가 없다"
+                            ),
+                            1,
+                            "'/analysis' 로 적으면 /home 아래가 아니라 최상위 경로가 된다.")
             ),
             new Concept(
                     "REST API",
@@ -243,9 +312,11 @@ record Concept(
                         return service.create(request);
                     }
                     """,
-                    new AiAnalysisResult.QuizItem(
+                    new Question(
                             "자원을 새로 만들었을 때 돌려줄 상태 코드는?",
-                            "201 Created 이다.")
+                            List.of("200 OK", "201 Created", "204 No Content", "302 Found"),
+                            1,
+                            "생성은 201 이다. 200 은 조회, 204 는 본문 없는 성공, 302 는 리다이렉트다.")
             ),
             new Concept(
                     "ERD",
@@ -262,9 +333,16 @@ record Concept(
                         CONSTRAINT uk_user_lecture UNIQUE (user_id, lecture_id)
                     );
                     """,
-                    new AiAnalysisResult.QuizItem(
+                    new Question(
                             "N:M 관계를 테이블로 표현하는 방법은?",
-                            "양쪽 기본키를 외래키로 갖는 연결 테이블을 만든다.")
+                            List.of(
+                                    "한쪽 테이블에만 외래키를 둔다",
+                                    "양쪽 기본키를 외래키로 갖는 연결 테이블을 만든다",
+                                    "두 테이블을 하나로 합친다",
+                                    "외래키 없이 인덱스만 만든다"
+                            ),
+                            1,
+                            "연결 테이블에 관계 고유의 속성까지 함께 둘 수 있다. reflections 가 그 예다.")
             )
     );
 }

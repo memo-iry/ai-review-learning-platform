@@ -107,12 +107,12 @@ public class ReflectionService {
 
         AiAnalysis analysis = saveAnalysis(reflection, result);
         PersonalizedReview review = saveReview(analysis, result);
-        saveQuiz(review, result);
+        Quiz quiz = saveQuiz(review, result);
         updateMastery(reflection.getUser(), result);
 
         int levelAfter = masteryService.currentLevel(reflection.getUser().getUserId());
 
-        return toResponse(analysis, review, result, levelBefore, levelAfter);
+        return toResponse(analysis, review, quiz, result, levelBefore, levelAfter);
     }
 
     private AiAnalysis saveAnalysis(Reflection reflection, AiAnalysisResult result) {
@@ -151,7 +151,7 @@ public class ReflectionService {
         return reviewRepository.save(review);
     }
 
-    private void saveQuiz(PersonalizedReview review, AiAnalysisResult result) {
+    private Quiz saveQuiz(PersonalizedReview review, AiAnalysisResult result) {
         Quiz quiz = quizRepository.findByReviewReviewId(review.getReviewId())
                 .orElseGet(Quiz::new);
 
@@ -159,7 +159,7 @@ public class ReflectionService {
         quiz.setTitle(result.reviewTitle() + " 확인 문제");
         quiz.setQuestions(writeJson(result.quiz()));
 
-        quizRepository.save(quiz);
+        return quizRepository.save(quiz);
     }
 
     private void updateMastery(User user, AiAnalysisResult result) {
@@ -186,11 +186,13 @@ public class ReflectionService {
 
     private AnalysisResponse toResponse(AiAnalysis analysis,
                                         PersonalizedReview review,
+                                        Quiz quiz,
                                         AiAnalysisResult result,
                                         int levelBefore,
                                         int levelAfter) {
-        List<AnalysisResponse.QuizItem> quiz = result.quiz().stream()
-                .map(item -> new AnalysisResponse.QuizItem(item.question(), item.answer()))
+        List<AnalysisResponse.QuizItem> quizItems = result.quiz().stream()
+                .map(item -> new AnalysisResponse.QuizItem(
+                        item.conceptName(), item.question(), item.options()))
                 .toList();
 
         return new AnalysisResponse(
@@ -206,10 +208,11 @@ public class ReflectionService {
                 levelAfter,
                 new AnalysisResponse.ReviewMaterial(
                         review.getReviewId(),
+                        quiz.getQuizId(),
                         result.reviewTitle(),
                         result.coreConcepts(),
                         result.exampleCode(),
-                        quiz
+                        quizItems
                 )
         );
     }

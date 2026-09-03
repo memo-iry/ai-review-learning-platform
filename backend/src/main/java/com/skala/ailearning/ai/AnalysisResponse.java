@@ -17,6 +17,7 @@ public record AnalysisResponse(
 ) {
     public record ReviewMaterial(
             Long reviewId,
+            Long quizId,
             String title,
             List<String> coreConcepts,
             String exampleCode,
@@ -24,6 +25,10 @@ public record AnalysisResponse(
     ) {
     }
 
-    public record QuizItem(String question, String answer) {
+    public record QuizItem(
+            String conceptName,
+            String question,
+            List<String> options
+    ) {
     }
 }

@@ -15,6 +15,12 @@ public record AiAnalysisResult(
         String exampleCode,
         List<QuizItem> quiz
 ) {
-    public record QuizItem(String question, String answer) {
+    public record QuizItem(
+            String conceptName,
+            String question,
+            List<String> options,
+            int answerIndex,
+            String explanation
+    ) {
     }
 }
