@@ -27,11 +27,11 @@ const router = createRouter({
       },
     },
     {
-      path: '/courses',
-      name: 'courses',
-      component: () => import('../pages/CourselistPage.vue'),
+      path: "/courses",
+      name: "courses",
+      component: () => import("../pages/CourselistPage.vue"),
       meta: {
-        step: '강의 목록',
+        step: "강의 목록",
       },
     },
     {
@@ -81,6 +81,16 @@ const router = createRouter({
       component: () => import("../pages/HistoryPage.vue"),
       meta: {
         step: "회고 기록",
+        requiresAnalysis: false,
+      },
+    },
+    {
+      // 실제 주소: /home/quiz/:quizId
+      path: "/quiz/:quizId",
+      name: "quiz-attempt",
+      component: () => import("../pages/QuizAttemptPage.vue"),
+      meta: {
+        step: "퀴즈 응시",
         requiresAnalysis: false,
       },
     },
