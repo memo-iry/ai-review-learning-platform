@@ -1,10 +1,18 @@
 <script setup>
 import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { api } from '../api/client.js'
+import { learningState } from '../stores/learning.js'
 
-const emit = defineEmits(['start'])
+const router = useRouter()
 const lectures = ref([])
 const error = ref('')
+
+function startLecture(lecture) {
+  learningState.lecture = lecture
+  learningState.analysis = null
+  router.push({ name: 'reflection', params: { lectureId: lecture.lectureId } })
+}
 
 onMounted(async () => {
   try { lectures.value = await api.getLectures() }
@@ -30,7 +38,7 @@ onMounted(async () => {
           <span class="tag">진행 중</span><h3>{{ item.title }}</h3><p>{{ item.description }}</p>
           <small>{{ item.lectureDate }} {{ item.startTime }}~{{ item.endTime }}</small>
         </div>
-        <button class="primary-button" @click="emit('start', item)">강의자료 확인</button>
+        <button class="primary-button" @click="startLecture(item)">강의자료 확인</button>
       </article>
     </div>
   </section>
