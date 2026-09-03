@@ -12,6 +12,8 @@ defineProps({
   ratioMax: { type: Number, default: 100 },
   ringLabel: { type: String, default: '' },
   tone: { type: String, default: 'accent' },
+  /** ratio 대신 우측에 알약형 뱃지를 보여주고 싶을 때 (예: "이번 달 +4") */
+  badge: { type: String, default: '' },
 })
 </script>
 
@@ -25,15 +27,9 @@ defineProps({
       </p>
     </div>
 
-    <ProgressRing
-      v-if="ratio !== null"
-      :value="ratio"
-      :max="ratioMax"
-      :label="ringLabel"
-      :tone="tone"
-      :size="76"
-      :thickness="5"
-    />
+    <ProgressRing v-if="ratio !== null" :value="ratio" :max="ratioMax" :label="ringLabel" :tone="tone" :size="76"
+      :thickness="5" />
+    <span v-else-if="badge" class="stat-card__badge">{{ badge }}</span>
   </BaseCard>
 </template>
 
@@ -65,5 +61,15 @@ defineProps({
   font-family: var(--font-body);
   font-size: var(--text-xs);
   font-weight: 400;
+}
+
+.stat-card__badge {
+  flex-shrink: 0;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  white-space: nowrap;
 }
 </style>
