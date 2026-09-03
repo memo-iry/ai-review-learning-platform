@@ -75,7 +75,33 @@ public class QuizService {
                         item.conceptName(), item.question(), item.options()))
                 .toList();
 
-        return new QuizResponse(quiz.getQuizId(), quiz.getTitle(), quiz.getCreatedAt(), questions);
+        Long lectureId = quiz.getReview().getAnalysis().getReflection().getLecture().getLectureId();
+
+        return new QuizResponse(quiz.getQuizId(), lectureId, quiz.getTitle(), quiz.getCreatedAt(), questions);
+    }
+
+    @Transactional(readOnly = true)
+    public List<QuizAttemptSummaryResponse> findAttemptsByUser(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다: " + userId));
+
+        return attemptRepository.findByUserUserIdOrderByCompletedAtDesc(userId).stream()
+                .map(this::toSummary)
+                .toList();
+    }
+
+    private QuizAttemptSummaryResponse toSummary(QuizAttempt attempt) {
+        Quiz quiz = attempt.getQuiz();
+
+        return new QuizAttemptSummaryResponse(
+                attempt.getAttemptId(),
+                quiz.getQuizId(),
+                quiz.getTitle(),
+                quiz.getReview().getAnalysis().getReflection().getLecture().getLectureId(),
+                attempt.getScore(),
+                attempt.getCorrectCount(),
+                attempt.getTotalCount(),
+                attempt.getCompletedAt());
     }
 
     @Transactional

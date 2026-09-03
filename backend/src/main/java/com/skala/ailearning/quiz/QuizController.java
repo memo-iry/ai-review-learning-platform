@@ -55,6 +55,20 @@ public class QuizController {
                 return quizService.findAllByUser(userId);
         }
 
+        @Operation(summary = "Quiz 응시 이력 조회", description = """
+                        특정 사용자의 Quiz 응시 이력을 완료 시각 최신순으로 조회한다.
+                        지난 퀴즈 목록에서 정답률을 보여줄 때 사용한다.
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "조회 성공"),
+                        @ApiResponse(responseCode = "404", description = "사용자 없음", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        @GetMapping("/attempts")
+        public List<QuizAttemptSummaryResponse> attempts(@RequestParam Long userId) {
+                accessGuard.requireSelfOrAdmin(userId);
+                return quizService.findAttemptsByUser(userId);
+        }
+
         @Operation(summary = "Quiz 응시", description = """
                         선택한 답안을 채점하고 결과를 저장한다.
                         answers 는 문항 순서대로의 보기 인덱스(0부터)다.

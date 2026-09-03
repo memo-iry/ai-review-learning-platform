@@ -9,15 +9,14 @@ import java.util.List;
  * 채점 결과(정답 포함)는 QuizAttemptResponse 를 사용한다.
  */
 public record QuizResponse(
-        Long quizId,
-        String title,
-        OffsetDateTime createdAt,
-        List<QuestionItem> questions
-) {
-    public record QuestionItem(
-            String conceptName,
-            String question,
-            List<String> options
-    ) {
-    }
+                Long quizId,
+                Long lectureId,
+                String title,
+                OffsetDateTime createdAt,
+                List<QuestionItem> questions) {
+        public record QuestionItem(
+                        String conceptName,
+                        String question,
+                        List<String> options) {
+        }
 }
