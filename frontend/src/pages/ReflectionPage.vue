@@ -8,7 +8,7 @@ import PageHeading from '@/components/common/PageHeading.vue'
 import BaseSelect from '@/components/common/BaseSelect.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import QuestionField from '@/components/reflection/QuestionField.vue'
-import AppLayout from '../components/AppLayout.vue'
+import AppLayout from '@/components/AppLayout.vue'
 
 const route = useRoute()
 const router = useRouter()

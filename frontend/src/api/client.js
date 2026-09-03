@@ -35,6 +35,12 @@ export const api = {
       method: "POST",
     }),
   getMastery: (userId) => request(`/users/${userId}/mastery`),
+  // Quiz 단건 조회 (문항만, 정답/해설 제외)
+  getQuiz: (quizId) => request(`/quizzes/${quizId}`),
+  // 사용자와 연결된 Quiz 전체 목록 조회
+  getQuizzes: (userId) => request(`/quizzes?userId=${userId}`),
+  // Quiz 응시 이력 조회 (정답률 등 표시용)
+  getQuizAttempts: (userId) => request(`/quizzes/attempts?userId=${userId}`),
   submitQuiz: (quizId, body) =>
     request(`/quizzes/${quizId}/attempts`, {
       method: "POST",

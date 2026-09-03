@@ -85,6 +85,16 @@ const router = createRouter({
       },
     },
     {
+      // 실제 주소: /home/quiz
+      path: "/quiz",
+      name: "quiz",
+      component: () => import("../pages/QuizPage.vue"),
+      meta: {
+        step: "회고 기록",
+        requiresAnalysis: false,
+      },
+    },
+    {
       path: "/:pathMatch(.*)*",
       redirect: "/",
     },
