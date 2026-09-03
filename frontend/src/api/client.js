@@ -27,4 +27,5 @@ export const api = {
   analyzeReflection: (reflectionId) => request(`/reflections/${reflectionId}/analyze`, {
     method: 'POST',
   }),
+  getMastery: (userId) => request(`/users/${userId}/mastery`),
 }

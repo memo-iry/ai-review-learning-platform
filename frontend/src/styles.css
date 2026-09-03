@@ -370,3 +370,44 @@ summary {
     min-width: 110px;
   }
 }
+
+.summary-card small {
+  color: #8a94a6;
+  font-size: 13px;
+}
+
+.weak-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.weak-card {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 12px 18px;
+  background: #fff8f2;
+  border: 1px solid #f0d3bd;
+  border-radius: 999px;
+}
+
+.weak-card strong {
+  font-size: 15px;
+}
+
+.weak-card span {
+  color: #b56a2f;
+  font-variant-numeric: tabular-nums;
+}
+
+.growth-detail {
+  color: #697386;
+}
+
+.empty-state {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  padding: 48px 0;
+}

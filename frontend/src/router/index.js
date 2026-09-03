@@ -17,9 +17,9 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: () => import('../pages/HomePage.vue'),
+      redirect: { name: 'dashboard' },
       meta: {
         step: '메인페이지',
-        requiresLecture: true,
       },
 
       children: [
@@ -38,6 +38,7 @@ const router = createRouter({
           component: () => import('../pages/ReflectionPage.vue'),
           meta: {
             step: '회고록',
+            requiresLecture: true,
           },
         },
         {
@@ -67,6 +68,7 @@ const router = createRouter({
           component: () => import('../pages/GrowthPage.vue'),
           meta: {
             step: '내 성장',
+            requiresAnalysis: true,
           },
         },
       ],
