@@ -11,10 +11,31 @@ record Concept(
 ) {
     boolean matches(String text) {
         String lower = text.toLowerCase();
-        if (lower.contains(name.toLowerCase())) {
+        if (containsToken(lower, name)) {
             return true;
         }
-        return aliases.stream().anyMatch(alias -> lower.contains(alias.toLowerCase()));
+        return aliases.stream().anyMatch(alias -> containsToken(lower, alias));
+    }
+
+    private static boolean containsToken(String lowerText, String token) {
+        String target = token.toLowerCase();
+        for (int from = 0; ; ) {
+            int start = lowerText.indexOf(target, from);
+            if (start < 0) {
+                return false;
+            }
+            int end = start + target.length();
+            boolean leftFree = start == 0 || !isAsciiWord(lowerText.charAt(start - 1));
+            boolean rightFree = end >= lowerText.length() || !isAsciiWord(lowerText.charAt(end));
+            if (leftFree && rightFree) {
+                return true;
+            }
+            from = start + 1;
+        }
+    }
+
+    private static boolean isAsciiWord(char c) {
+        return (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9');
     }
 
     static final List<Concept> ALL = List.of(
@@ -175,6 +196,37 @@ record Concept(
                     new AiAnalysisResult.QuizItem(
                             "자식 컴포넌트에서 부모의 상태를 바꾸려면?",
                             "직접 바꾸지 않고 emit 으로 이벤트를 올려 부모가 바꾸게 한다.")
+            ),
+            new Concept(
+                    "Vue Router",
+                    List.of("라우터", "라우팅", "routerview", "router-view", "router.push", "중첩 라우"),
+                    List.of(
+                            "부모 라우트의 children 배열에 자식 라우트를 등록한다",
+                            "자식 라우트의 path 앞에는 슬래시를 붙이지 않는다. 붙이면 절대 경로가 된다",
+                            "자식 컴포넌트는 부모 컴포넌트의 RouterView 자리에 그려진다",
+                            "페이지가 바뀌어도 남아야 하는 값은 컴포넌트가 아니라 store 에 둔다",
+                            "router.push 에 경로 대신 이름을 쓰면 주소가 바뀌어도 코드를 안 고쳐도 된다"
+                    ),
+                    """
+                    const routes = [
+                      {
+                        path: '/home',
+                        name: 'home',
+                        component: () => import('../pages/HomePage.vue'),
+                        children: [
+                          { path: 'analysis', name: 'analysis',
+                            component: () => import('../pages/AnalysisPage.vue') },
+                          { path: 'review', name: 'review',
+                            component: () => import('../pages/ReviewPage.vue') },
+                        ],
+                      },
+                    ]
+
+                    router.push({ name: 'analysis' })   // /home/analysis
+                    """,
+                    new AiAnalysisResult.QuizItem(
+                            "children 에 적는 path 앞에 슬래시를 붙여야 하는가?",
+                            "붙이지 않는다. 슬래시를 붙이면 부모 경로를 무시한 절대 경로가 된다.")
             ),
             new Concept(
                     "REST API",

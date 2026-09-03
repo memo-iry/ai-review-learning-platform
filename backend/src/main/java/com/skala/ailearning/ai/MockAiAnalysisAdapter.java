@@ -20,11 +20,11 @@ public class MockAiAnalysisAdapter implements AiAnalysisPort {
 
     @Override
     public AiAnalysisResult analyze(AnalysisCommand command) {
-        List<Concept> understood = match(command.understood());
-        List<Concept> weak = match(command.difficult());
-        List<Concept> wanted = match(command.wantsToLearn());
+        List<Concept> understood = specific(match(command.understood()));
+        List<Concept> weak = specific(match(command.difficult()));
+        List<Concept> wanted = specific(match(command.wantsToLearn()));
 
-        weak.removeAll(understood);
+        understood.removeAll(weak);
 
         if (weak.isEmpty()) {
             weak = fallbackFor(command);
@@ -59,6 +59,13 @@ public class MockAiAnalysisAdapter implements AiAnalysisPort {
         }
         return Concept.ALL.stream()
                 .filter(concept -> concept.matches(text))
+                .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
+    }
+
+    private List<Concept> specific(List<Concept> matched) {
+        return matched.stream()
+                .filter(concept -> matched.stream().noneMatch(other ->
+                        other != concept && other.name().contains(concept.name())))
                 .collect(java.util.stream.Collectors.toCollection(ArrayList::new));
     }
 
