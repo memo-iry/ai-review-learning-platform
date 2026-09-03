@@ -22,3 +22,6 @@ frontend/dist/
 !.env.example
 frontend/.env
 
+
+# 개인 작업 메모
+docs/TODO.md
