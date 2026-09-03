@@ -52,6 +52,15 @@ public class AiAnalysis {
     @Column(columnDefinition = "text")
     private String summary;
 
+    @Column(name = "understanding_score")
+    private Integer understandingScore;
+
+    @Column(name = "understood_summary", columnDefinition = "text")
+    private String understoodSummary;
+
+    @Column(name = "weakness_summary", columnDefinition = "text")
+    private String weaknessSummary;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private AnalysisStatus status;

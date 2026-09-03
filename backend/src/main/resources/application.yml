@@ -24,3 +24,7 @@ server:
 logging:
   level:
     org.hibernate.orm.jdbc.bind: trace
+
+app:
+  cors:
+    allowed-origin: ${FRONTEND_ORIGIN:http://localhost:5173}
