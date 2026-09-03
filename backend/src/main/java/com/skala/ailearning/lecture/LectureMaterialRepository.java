@@ -1,8 +1,10 @@
-package com.skala.ailearning.material;
+package com.skala.ailearning.lecture;
 
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface LectureMaterialRepository extends JpaRepository<LectureMaterial, Long> {
-    List<LectureMaterial> findByLectureIdOrderByIdAsc(Long lectureId);
+
+    List<LectureMaterial> findByLectureLectureId(Long lectureId);
 }

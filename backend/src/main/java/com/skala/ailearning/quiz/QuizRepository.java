@@ -1,3 +1,10 @@
 package com.skala.ailearning.quiz;
+
 import org.springframework.data.jpa.repository.JpaRepository;
-public interface QuizRepository extends JpaRepository<Quiz, Long> {}
+
+import java.util.Optional;
+
+public interface QuizRepository extends JpaRepository<Quiz, Long> {
+
+    Optional<Quiz> findByReviewReviewId(Long reviewId);
+}

@@ -1,31 +1,26 @@
 spring:
   application:
     name: ai-review-learning-backend
+
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/ai_review}
-    username: ${DB_USERNAME:ai_review}
-    password: ${DB_PASSWORD:ai_review}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 5
+
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
-  flyway:
-    enabled: true
 
 server:
-  port: ${SERVER_PORT:8080}
+  port: 8080
 
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    operations-sorter: method
-    tags-sorter: alpha
-
-app:
-  cors:
-    allowed-origin: ${FRONTEND_ORIGIN:http://localhost:5173}
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: trace

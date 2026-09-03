@@ -1,10 +1,15 @@
 package com.skala.ailearning.reflection;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface ReflectionRepository extends JpaRepository<Reflection, Long> {
-    List<Reflection> findByLearnerIdOrderByCreatedAtDesc(Long learnerId);
-    boolean existsByLearnerIdAndLectureId(Long learnerId, Long lectureId);
+
+    Optional<Reflection> findByUserUserIdAndLectureLectureId(Long userId, Long lectureId);
+
+    List<Reflection> findByUserUserIdOrderByCreatedAtDesc(Long userId);
+
+    boolean existsByUserUserIdAndLectureLectureId(Long userId, Long lectureId);
 }

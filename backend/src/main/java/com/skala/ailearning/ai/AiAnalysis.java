@@ -1,35 +1,68 @@
 package com.skala.ailearning.ai;
 
-import java.time.LocalDateTime;
-
+import com.skala.ailearning.reflection.Reflection;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import com.skala.ailearning.reflection.Reflection;
+import java.time.OffsetDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "ai_analyses", uniqueConstraints = @UniqueConstraint(name = "uk_analysis_reflection", columnNames = "reflection_id"))
+@Table(
+        name = "ai_analyses",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_analysis_reflection",
+                columnNames = "reflection_id"
+        )
+)
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AiAnalysis {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "analysis_id") private Long id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "analysis_id")
+    private Long analysisId;
+
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "reflection_id", nullable = false) private Reflection reflection;
-    @JdbcTypeCode(SqlTypes.JSON) @Column(name = "understood_topics", columnDefinition = "json") private String understoodTopics;
-    @JdbcTypeCode(SqlTypes.JSON) @Column(name = "weak_topics", columnDefinition = "json") private String weakTopics;
-    @JdbcTypeCode(SqlTypes.JSON) @Column(name = "recommended_topics", columnDefinition = "json") private String recommendedTopics;
+    @JoinColumn(name = "reflection_id", nullable = false, unique = true)
+    private Reflection reflection;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "understood_topics")
+    private List<String> understoodTopics;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "weak_topics")
+    private List<String> weakTopics;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "recommended_topics")
+    private List<String> recommendedTopics;
+
+    @Column(columnDefinition = "text")
     private String summary;
-    @Enumerated(EnumType.STRING) @Column(nullable = false, length = 20) private AnalysisStatus status;
-    @Column(name = "created_at", nullable = false) private LocalDateTime createdAt;
-    protected AiAnalysis() {}
-    public AiAnalysis(Reflection reflection, String understoodTopics, String weakTopics,
-                      String recommendedTopics, String summary, AnalysisStatus status) {
-        this.reflection = reflection;
-        this.understoodTopics = understoodTopics;
-        this.weakTopics = weakTopics;
-        this.recommendedTopics = recommendedTopics;
-        this.summary = summary;
-        this.status = status;
-        this.createdAt = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private AnalysisStatus status;
+
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt;
+
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) {
+            createdAt = OffsetDateTime.now();
+        }
     }
 }

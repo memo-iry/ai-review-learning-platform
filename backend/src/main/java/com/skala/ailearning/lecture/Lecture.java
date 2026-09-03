@@ -1,4 +1,4 @@
-package com.skala.ailearning.user;
+package com.skala.ailearning.lecture;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,34 +7,38 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "users")
+@Table(name = "lectures")
 @Getter
 @Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Lecture {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
-
-    @Column(nullable = false, unique = true, length = 255)
-    private String email;
+    @Column(name = "lecture_id")
+    private Long lectureId;
 
     @Column(nullable = false, length = 255)
-    private String password;
+    private String title;
 
-    @Column(nullable = false, length = 100)
-    private String name;
+    @Column(columnDefinition = "text")
+    private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private UserRole role;
+    @Column(name = "lecture_date", nullable = false)
+    private LocalDate lectureDate;
+
+    @Column(name = "start_time")
+    private LocalTime startTime;
+
+    @Column(name = "end_time")
+    private LocalTime endTime;
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;

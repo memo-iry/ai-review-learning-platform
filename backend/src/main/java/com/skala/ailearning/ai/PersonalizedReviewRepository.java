@@ -2,4 +2,12 @@ package com.skala.ailearning.ai;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PersonalizedReviewRepository extends JpaRepository<PersonalizedReview, Long> {}
+import java.util.List;
+import java.util.Optional;
+
+public interface PersonalizedReviewRepository extends JpaRepository<PersonalizedReview, Long> {
+
+    Optional<PersonalizedReview> findByAnalysisAnalysisId(Long analysisId);
+
+    List<PersonalizedReview> findByAnalysisReflectionUserUserIdOrderByCreatedAtDesc(Long userId);
+}
