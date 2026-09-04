@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '@/api/client.js'
 import { selectLecture } from '@/stores/learning.js'
+import Skeleton from '@/components/common/Skeleton.vue'
 
 const router = useRouter()
 
@@ -178,12 +179,28 @@ onMounted(loadLectures)
       전체 강의 목록
     </p>
 
-    <p
+    <!-- 로딩 중: 실제 강의 카드와 같은 크기·배치로 자리를 잡아둡니다. -->
+    <div
       v-if="isLoading"
-      class="message"
+      class="lecture-list"
     >
-      강의 목록을 불러오는 중입니다.
-    </p>
+      <article
+        v-for="placeholder in 4"
+        :key="placeholder"
+        class="lecture-item"
+      >
+        <div class="lecture-content">
+          <Skeleton width="48px" height="17px" radius="10px" />
+          <Skeleton width="230px" height="16px" style="margin: 9px 0 6px" />
+          <Skeleton width="320px" height="11px" />
+        </div>
+
+        <div class="lecture-side">
+          <Skeleton width="70px" height="10px" />
+          <Skeleton width="78px" height="10px" />
+        </div>
+      </article>
+    </div>
 
     <p
       v-else-if="errorMessage"

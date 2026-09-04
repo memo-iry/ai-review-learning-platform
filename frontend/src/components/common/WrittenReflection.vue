@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseCard from './BaseCard.vue'
+import Skeleton from './Skeleton.vue'
 import { api } from '@/api/client.js'
 import { learningState } from '@/stores/learning.js'
 
@@ -9,6 +10,7 @@ const router = useRouter()
 
 const lectures = ref([])
 const selectedLectureId = ref(null)
+const isLoading = ref(true)
 
 function getLectureId(lecture) {
   return lecture.id ?? lecture.lectureId
@@ -27,6 +29,8 @@ async function loadLectures() {
     }
   } catch (error) {
     console.error('강의 목록 조회 실패', error)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -66,7 +70,14 @@ onMounted(loadLectures)
       </button>
     </div>
 
+    <Skeleton
+      v-if="isLoading"
+      width="100%"
+      height="34px"
+    />
+
     <select
+      v-else
       v-model="selectedLectureId"
       class="lecture-select"
     >

@@ -34,36 +34,44 @@ async function signOut() {
         <RouterLink to="/quiz" class="step">QUIZ</RouterLink>
       </nav>
 
-      <button
-        v-if="authState.user"
-        type="button"
-        class="signout"
-        @click="signOut"
-      >
+      <button v-if="authState.user" type="button" class="signout" @click="signOut">
         로그아웃
       </button>
     </aside>
 
     <main class="page">
-      <router-view />
+      <!-- 페이지가 <AppLayout> 안에 본문을 넣으면 그 내용이,
+           넣지 않으면 기존처럼 router-view가 렌더링됩니다.
+           (사이드바와 본문을 형제로 두면 세로로 쌓이기 때문에
+            본문을 이 안쪽으로 받습니다.) -->
+      <slot>
+        <router-view />
+      </slot>
     </main>
   </div>
 </template>
 
 <style scoped>
+/* flex-direction을 명시적으로 선언합니다.
+   생략하면 전역 스타일에 같은 클래스명이 생겼을 때 그 값을 그대로
+   물려받아 사이드바와 페이지가 세로로 쌓이는 사고가 납니다. */
 .app-shell {
   display: flex;
-  min-height: 100vh;
+  flex-direction: row;
+  width: 100%;
   background: #ffffff;
 }
 
+/* 높이는 min-height: 100vh 대신 부모(#app)의 stretch에 맡깁니다.
+   #app 에 padding: 40px 16px 가 있어서, 여기서 100vh 를 다시 잡으면
+   그 패딩만큼(80px) 세로 스크롤이 생깁니다. */
 .sidebar {
   display: flex;
   flex-direction: column;
   width: 128px;
-  min-height: 100vh;
   flex-shrink: 0;
   padding: 16px 14px;
+  border-right: 1px solid var(--color-border);
   background: #ffffff;
 }
 

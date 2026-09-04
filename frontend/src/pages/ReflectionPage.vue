@@ -9,6 +9,7 @@ import BaseSelect from '@/components/common/BaseSelect.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import QuestionField from '@/components/reflection/QuestionField.vue'
 import AppLayout from '@/components/AppLayout.vue'
+import PageContainer from '@/components/common/PageContainer.vue'
 import { currentUserId } from '../stores/auth.js'
 
 const route = useRoute()
@@ -61,43 +62,41 @@ async function submit() {
 </script>
 
 <template>
-  <section>
-    <AppLayout />
-  </section>
-  <div class="reflection-page">
-    <PageHeading title="새 회고 작성" description="오늘 학습한 내용을 회고록으로 입력하고 AI 분석을 통해 복습해보세요." description-tone="accent"
-      divider>
-      <template #actions>
-        <BaseSelect v-model="selectedLectureId" :options="lectureOptions" />
-      </template>
-    </PageHeading>
+  <AppLayout>
+    <PageContainer>
+      <div class="reflection-page">
+        <PageHeading title="새 회고 작성" description="오늘 학습한 내용을 회고록으로 입력하고 AI 분석을 통해 복습해보세요." description-tone="accent"
+          divider>
+          <template #actions>
+            <BaseSelect v-model="selectedLectureId" :options="lectureOptions" />
+          </template>
+        </PageHeading>
 
-    <form class="reflection-page__form" @submit.prevent="submit">
-      <QuestionField number="01" label="오늘 잘 이해한 내용" v-model="form.understood"
-        placeholder="오늘 학습한 내용 중 명확하게 이해하고 내 것으로 만든 부분을 작성해 주세요." required />
+        <form class="reflection-page__form" @submit.prevent="submit">
+          <QuestionField number="01" label="오늘 잘 이해한 내용" v-model="form.understood"
+            placeholder="오늘 학습한 내용 중 명확하게 이해하고 내 것으로 만든 부분을 작성해 주세요." required />
 
-      <QuestionField number="02" label="아직 어려운 내용" v-model="form.difficult"
-        placeholder="강의나 실습 중 헷갈렸거나 추가적인 설명이 필요한 부분을 작성해 주세요." required />
+          <QuestionField number="02" label="아직 어려운 내용" v-model="form.difficult"
+            placeholder="강의나 실습 중 헷갈렸거나 추가적인 설명이 필요한 부분을 작성해 주세요." required />
 
-      <QuestionField number="03" label="추가로 공부하고 싶은 내용" v-model="form.wantsToLearn"
-        placeholder="오늘 내용을 바탕으로 더 깊이 찾아보거나 공부해보고 싶은 주제를 적어주세요." />
+          <QuestionField number="03" label="추가로 공부하고 싶은 내용" v-model="form.wantsToLearn"
+            placeholder="오늘 내용을 바탕으로 더 깊이 찾아보거나 공부해보고 싶은 주제를 적어주세요." />
 
-      <p v-if="error" class="reflection-page__error">{{ error }}</p>
+          <p v-if="error" class="reflection-page__error">{{ error }}</p>
 
-      <div class="reflection-page__footer">
-        <BaseButton variant="primary" type="submit" rounded :disabled="loading">
-          {{ loading ? '회고록과 강의자료 분석 중...' : '회고 저장하고 AI 분석하기' }}
-        </BaseButton>
+          <div class="reflection-page__footer">
+            <BaseButton variant="primary" type="submit" rounded :disabled="loading">
+              {{ loading ? '회고록과 강의자료 분석 중...' : '회고 저장하고 AI 분석하기' }}
+            </BaseButton>
+          </div>
+        </form>
       </div>
-    </form>
-  </div>
+    </PageContainer>
+  </AppLayout>
 </template>
 
 <style scoped>
 .reflection-page {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
 }
 
 .reflection-page__error {
@@ -113,9 +112,6 @@ async function submit() {
 }
 
 @media (max-width: 720px) {
-  .reflection-page {
-    padding: var(--space-6) var(--space-4);
-  }
 
   .reflection-page__footer {
     justify-content: stretch;

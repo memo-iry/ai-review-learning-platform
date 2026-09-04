@@ -14,8 +14,10 @@ import { api } from '@/api/client.js'
 import { learningState } from '@/stores/learning.js'
 
 import AppLayout from '@/components/AppLayout.vue'
+import PageContainer from '@/components/common/PageContainer.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
+import Skeleton from '@/components/common/Skeleton.vue'
 import AnalysisScoreCard from '@/components/analysis/AnalysisScoreCard.vue'
 
 const route = useRoute()
@@ -139,162 +141,152 @@ watch(
 </script>
 
 <template>
-  <section>
-    <AppLayout />
-  </section>
+  <AppLayout>
+    <PageContainer size="md">
+      <main class="analysis-page">
+        <!-- 로딩 중: 실제 결과 화면과 같은 배치로 자리를 잡아둡니다. -->
+        <template v-if="loading">
+          <header class="page-heading">
+            <Skeleton width="60%" height="30px" />
+          </header>
 
-  <main class="analysis-page">
-    <p
-      v-if="loading"
-      class="state-message"
-    >
-      분석 결과를 불러오는 중입니다.
-    </p>
+          <section class="level-section">
+            <Skeleton width="52px" height="11px" />
+            <div class="level-result">
+              <Skeleton width="60px" height="23px" radius="13px" />
+            </div>
+          </section>
 
-    <template v-else-if="analysis">
-      <header class="page-heading">
-        <h1>
-          {{ lectureTitle }}
-        </h1>
-      </header>
+          <section class="content-section">
+            <Skeleton width="100%" height="150px" radius="5px" />
+          </section>
 
-      <section class="level-section">
-        <p class="section-label">
-          학습 단계
-        </p>
-        <div class="level-result">
-          <span class="level-badge">
-            {{ understandingLevel }}단계
-          </span>
-        </div>
-      </section>
-
-      <section class="content-section">
-        <AnalysisScoreCard
-          :score="understandingScore"
-          :reason="
-            analysis.analysisReason
-          "
-        />
-      </section>
-
-      <section class="content-section">
-        <div class="section-heading">
-          <h2>분석 결과</h2>
-        </div>
-
-        <div class="stack-list">
-          <article
-            class="result-card understood-card"
-          >
-            <h3>이해한 부분</h3>
-
-            <p>
-              {{
-                analysis.understoodSummary ||
-                '분석 내용이 없습니다.'
-              }}
-            </p>
-          </article>
-
-          <article
-            class="result-card weakness-card"
-          >
-            <h3>보완이 필요한 부분</h3>
-
-            <p>
-              {{
-                analysis.weaknessSummary ||
-                '분석 내용이 없습니다.'
-              }}
-            </p>
-          </article>
-
-          <article class="result-card">
-            <p class="card-eyebrow">
-              맞춤 복습
-            </p>
-
-            <h3>핵심 개념</h3>
-
-            <ol
-              v-if="
-                review?.coreConcepts?.length
-              "
-              class="concept-list"
-            >
-              <li
-                v-for="(
-                  concept,
-                  index
-                ) in review.coreConcepts"
-                :key="index"
-              >
-                {{ concept }}
-              </li>
-            </ol>
-
-            <p v-else>
-              생성된 핵심 개념이 없습니다.
-            </p>
-          </article>
-
-          <article class="result-card">
-            <div class="card-title-area">
-              <h3>예제 코드</h3>
+          <section class="content-section">
+            <div class="section-heading">
+              <Skeleton width="56px" height="12px" />
             </div>
 
-            <pre
-              v-if="review?.exampleCode"
-              class="example-code"
-            ><code>{{ review.exampleCode }}</code></pre>
+            <div class="stack-list">
+              <div v-for="placeholder in 4" :key="placeholder" class="result-card">
+                <Skeleton width="120px" height="17px" />
+                <Skeleton width="100%" height="13px" style="margin-top: 14px" />
+                <Skeleton width="85%" height="13px" style="margin-top: 8px" />
+              </div>
+            </div>
+          </section>
+        </template>
 
-            <p v-else>
-              생성된 예제 코드가 없습니다.
+        <template v-else-if="analysis">
+          <header class="page-heading">
+            <h1>
+              {{ lectureTitle }}
+            </h1>
+          </header>
+
+          <section class="level-section">
+            <p class="section-label">
+              학습 단계
             </p>
-          </article>
-        </div>
-      </section>
+            <div class="level-result">
+              <span class="level-badge">
+                {{ understandingLevel }}단계
+              </span>
+            </div>
+          </section>
 
-      <footer class="page-footer">
-        <BaseButton
-          variant="primary"
-          @click="moveToDashboard"
-        >
-          대시보드로 이동
-        </BaseButton>
-      </footer>
-    </template>
+          <section class="content-section">
+            <AnalysisScoreCard :score="understandingScore" :reason="analysis.analysisReason
+              " />
+          </section>
 
-    <EmptyState
-      v-else
-      title="결과를 불러오지 못했습니다"
-      :description="error"
-    >
-      <template #action>
-        <BaseButton
-          variant="pill"
-          @click="moveToReflection"
-        >
-          회고록으로 이동
-        </BaseButton>
-      </template>
-    </EmptyState>
-  </main>
+          <section class="content-section">
+            <div class="section-heading">
+              <h2>분석 결과</h2>
+            </div>
+
+            <div class="stack-list">
+              <article class="result-card understood-card">
+                <h3>이해한 부분</h3>
+
+                <p>
+                  {{
+                    analysis.understoodSummary ||
+                    '분석 내용이 없습니다.'
+                  }}
+                </p>
+              </article>
+
+              <article class="result-card weakness-card">
+                <h3>보완이 필요한 부분</h3>
+
+                <p>
+                  {{
+                    analysis.weaknessSummary ||
+                    '분석 내용이 없습니다.'
+                  }}
+                </p>
+              </article>
+
+              <article class="result-card">
+                <p class="card-eyebrow">
+                  맞춤 복습
+                </p>
+
+                <h3>핵심 개념</h3>
+
+                <ol v-if="
+                  review?.coreConcepts?.length
+                " class="concept-list">
+                  <li v-for="(
+concept,
+  index
+                    ) in review.coreConcepts" :key="index">
+                    {{ concept }}
+                  </li>
+                </ol>
+
+                <p v-else>
+                  생성된 핵심 개념이 없습니다.
+                </p>
+              </article>
+
+              <article class="result-card">
+                <div class="card-title-area">
+                  <h3>예제 코드</h3>
+                </div>
+
+                <pre v-if="review?.exampleCode" class="example-code"><code>{{ review.exampleCode }}</code></pre>
+
+                <p v-else>
+                  생성된 예제 코드가 없습니다.
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <footer class="page-footer">
+            <BaseButton variant="primary" @click="moveToDashboard">
+              대시보드로 이동
+            </BaseButton>
+          </footer>
+        </template>
+
+        <EmptyState v-else title="결과를 불러오지 못했습니다" :description="error">
+          <template #action>
+            <BaseButton variant="pill" @click="moveToReflection">
+              회고록으로 이동
+            </BaseButton>
+          </template>
+        </EmptyState>
+      </main>
+    </PageContainer>
+  </AppLayout>
 </template>
 
 <style scoped>
+/* 폭·중앙정렬·좌우 패딩은 PageContainer가 담당합니다. */
 .analysis-page {
   width: 100%;
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 32px 24px;
-}
-
-.state-message {
-  padding: 60px 20px;
-  color: #9298a1;
-  text-align: center;
 }
 
 .page-heading {

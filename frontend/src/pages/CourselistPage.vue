@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { api } from '../api/client.js'
 import { learningState, selectLecture } from '../stores/learning.js'
 import AppLayout from '../components/AppLayout.vue'
+import PageContainer from '../components/common/PageContainer.vue'
 import { currentUserId } from '../stores/auth.js'
 import LectureList from '../components/common/LectureList.vue'
 
@@ -40,10 +41,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <section>
-    <AppLayout />
-  </section>
-  <main class="main-content">
-    <LectureList />
-  </main>
+  <AppLayout>
+    <PageContainer>
+      <main class="main-content">
+        <LectureList />
+      </main>
+    </PageContainer>
+  </AppLayout>
 </template>

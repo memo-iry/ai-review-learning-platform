@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { api } from '../api/client.js'
 import { learningState, selectLecture } from '../stores/learning.js'
 import AppLayout from '../components/AppLayout.vue'
+import PageContainer from '../components/common/PageContainer.vue'
 import TodayStudy from '../components/common/TodayStudy.vue'
 import WrittenReflection from '../components/common/WrittenReflection.vue'
 import WeeklyReflectionChart from '../components/common/WeeklyReflectionChart.vue'
@@ -94,42 +95,43 @@ const quizRecords = [
 </script>
 
 <template>
-  <section>
-    <AppLayout />
-  </section>
-  <section class="dashboard-grid">
-    <div class="dashboard-date">
-      {{ currentDate }} {{ currentWeekday }}
-      <hr />
-    </div>
+  <AppLayout>
+    <PageContainer>
+      <section class="dashboard-grid">
+        <div class="dashboard-date">
+          {{ currentDate }} {{ currentWeekday }}
+          <hr />
+        </div>
 
-    <div class="today-lesson">
-      <TodayStudy />
-    </div>
+        <div class="today-lesson">
+          <TodayStudy />
+        </div>
 
-    <div class="reflection-card">
-      <WrittenReflection />
-    </div>
+        <div class="reflection-card">
+          <WrittenReflection />
+        </div>
 
-    <div class="recent-record">
-      <WeeklyClassCalendar
-        :lectures="lectures"
-      />
-    </div>
+        <div class="recent-record">
+          <WeeklyClassCalendar
+            :lectures="lectures"
+          />
+        </div>
 
-    <div class="emotion-analysis">
-      <WeeklyReflectionChart
-        :records="weeklyRecords"
-        :completion-rate="15"
-      />
-    </div>
+        <div class="emotion-analysis">
+          <WeeklyReflectionChart
+            :records="weeklyRecords"
+            :completion-rate="15"
+          />
+        </div>
 
-    <div class="weakness-analysis">
-      <WeaknessAnalysis
-        :weaknesses="weaknesses"
-      />
-    </div>
-  </section>
+        <div class="weakness-analysis">
+          <WeaknessAnalysis
+            :weaknesses="weaknesses"
+          />
+        </div>
+      </section>
+    </PageContainer>
+  </AppLayout>
 </template>
 
 <style scoped>
