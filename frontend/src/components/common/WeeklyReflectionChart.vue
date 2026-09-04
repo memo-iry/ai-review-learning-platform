@@ -15,7 +15,10 @@ const props = defineProps({
 })
 
 const maxCount = computed(() => {
-  return Math.max(...props.records.map((record) => record.count), 1)
+  return Math.max(
+    ...props.records.map((record) => record.count),
+    1,
+  )
 })
 
 function getBarHeight(count) {
@@ -36,6 +39,10 @@ function getBarHeight(count) {
         class="bar-item"
       >
         <div class="bar-area">
+          <span class="count-label">
+            {{ record.count }}
+          </span>
+
           <span
             class="bar"
             :class="{ muted: !record.completed }"
@@ -71,8 +78,8 @@ function getBarHeight(count) {
   display: flex;
   align-items: end;
   justify-content: space-around;
-  height: 115px;
-  margin-top: 18px;
+  height: 130px;
+  margin-top: 10px;
 }
 
 .bar-item {
@@ -84,8 +91,17 @@ function getBarHeight(count) {
 
 .bar-area {
   display: flex;
-  align-items: end;
-  height: 80px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 100px;
+}
+
+.count-label {
+  color: #7d8490;
+  font-size: 9px;
+  line-height: 1;
 }
 
 .bar {

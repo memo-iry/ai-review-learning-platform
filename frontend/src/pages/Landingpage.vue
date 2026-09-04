@@ -44,7 +44,7 @@ const loginhandler = () => {
     <!-- 3, 4열: 기능 소개 -->
     <div class="landing__col landing__col--features">
       <div class="features__body">
-        <div class="features__eyebrow">이런<br/>서비스를<br/>제공합니다 </div>
+        <div class="features__eyebrow">나에게<br/>가장<br/>필요한 학습 </div>
         <div class="feature">
   <h2 class="feature__title">01. 복습</h2>
   <hr class="feature__divider" />

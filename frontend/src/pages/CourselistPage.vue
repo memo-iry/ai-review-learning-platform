@@ -5,6 +5,7 @@ import { api } from '../api/client.js'
 import { learningState, selectLecture } from '../stores/learning.js'
 import AppLayout from '../components/AppLayout.vue'
 import { currentUserId } from '../stores/auth.js'
+import LectureList from '../components/common/LectureList.vue'
 
 const LEVEL_NAMES = ['', '인지', '이해', '적용', '구현']
 
@@ -43,29 +44,6 @@ onMounted(async () => {
     <AppLayout />
   </section>
   <main class="main-content">
-    <section class="content-section">
-      <h2>강의 목록</h2>
-  
-      <p v-if="error" class="error-message">{{ error }}</p>
-  
-      <div class="course-list">
-        <article
-          v-for="item in lectures"
-          :key="item.lectureId"
-          class="course-card"
-        >
-          <div>
-            <span class="tag">진행 중</span>
-            <h3>{{ item.title }}</h3>
-            <p>{{ item.description }}</p>
-            <small>{{ item.lectureDate }} {{ item.startTime }}~{{ item.endTime }}</small>
-          </div>
-  
-          <button class="primary-button" @click="startLecture(item)">
-            강의자료 확인
-          </button>
-        </article>
-      </div>
-    </section>
+    <LectureList />
   </main>
 </template>
