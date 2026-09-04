@@ -48,7 +48,7 @@ const thisMonthCount = computed(() => {
 
     return (
       created.getFullYear() ===
-        now.getFullYear() &&
+      now.getFullYear() &&
       created.getMonth() === now.getMonth()
     )
   }).length
@@ -228,80 +228,48 @@ onMounted(loadHistory)
 </script>
 
 <template>
-  <section>
-    <AppLayout />
-  </section>
 
-  <main class="my-reflection-page">
-    <PageHeading title="나의 회고록" />
 
-    <AppSection title="학습 및 회고 현황">
-      <div class="my-reflection-page__stats">
-        <StatCard
-          label="총 회고 수"
-          :value="`${totalCount}건`"
-          :badge="
-            `이번 달 ${thisMonthCount}건`
-          "
-        />
+  <AppLayout>
 
-        <StatCard
-          label="평균 이해도"
-          :value="
-            averageUnderstanding !== null
-              ? `${averageUnderstanding}%`
-              : '-'
-          "
-        />
-      </div>
-    </AppSection>
+    <main class="my-reflection-page">
+      <PageHeading title="나의 회고록" />
 
-    <AppSection
-      title="전체 회고 기록"
-      class="my-reflection-page__records"
-    >
-      <p
-        v-if="loading"
-        class="my-reflection-page__message"
-      >
-        회고 기록을 불러오는 중입니다.
+      <AppSection title="학습 및 회고 현황">
+        <div class="my-reflection-page__stats">
+          <StatCard label="총 회고 수" :value="`${totalCount}건`" :badge="`이번 달 ${thisMonthCount}건`
+            " />
+
+          <StatCard label="평균 이해도" :value="averageUnderstanding !== null
+            ? `${averageUnderstanding}%`
+            : '-'
+            " />
+        </div>
+      </AppSection>
+
+      <AppSection title="전체 회고 기록" class="my-reflection-page__records">
+        <p v-if="loading" class="my-reflection-page__message">
+          회고 기록을 불러오는 중입니다.
+        </p>
+
+        <div v-else-if="rows.length" class="my-reflection-page__scroll">
+          <ul class="my-reflection-page__list">
+            <RecordRow v-for="row in rows" :key="row.reflectionId" :category="row.week
+              ? `${row.week}주차`
+              : ''
+              " :title="row.title" :date="row.date" action-label="결과창으로 가기 →" @action="goToAnalysis(row)" />
+          </ul>
+        </div>
+
+        <EmptyState v-else title="아직 작성한 회고가 없습니다" description="강의를 듣고 회고를 남기면 여기에 모아서 보여드려요." />
+      </AppSection>
+
+      <p v-if="error" class="my-reflection-page__error">
+        {{ error }}
       </p>
+    </main>
+  </AppLayout>
 
-      <div
-        v-else-if="rows.length"
-        class="my-reflection-page__scroll"
-      >
-        <ul class="my-reflection-page__list">
-          <RecordRow
-            v-for="row in rows"
-            :key="row.reflectionId"
-            :category="
-              row.week
-                ? `${row.week}주차`
-                : ''
-            "
-            :title="row.title"
-            :date="row.date"
-            action-label="결과창으로 가기 →"
-            @action="goToAnalysis(row)"
-          />
-        </ul>
-      </div>
-
-      <EmptyState
-        v-else
-        title="아직 작성한 회고가 없습니다"
-        description="강의를 듣고 회고를 남기면 여기에 모아서 보여드려요."
-      />
-    </AppSection>
-
-    <p
-      v-if="error"
-      class="my-reflection-page__error"
-    >
-      {{ error }}
-    </p>
-  </main>
 </template>
 
 <style scoped>
@@ -361,8 +329,7 @@ onMounted(loadHistory)
 @media (max-width: 640px) {
   .my-reflection-page {
     padding:
-      var(--space-6)
-      var(--space-4);
+      var(--space-6) var(--space-4);
   }
 
   .my-reflection-page__stats {
