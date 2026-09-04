@@ -184,61 +184,28 @@ onMounted(loadMaterials)
   <AppLayout>
     <PageContainer>
       <main class="reflection-page">
-        <PageHeading
-          title="새 회고 작성"
-          description="오늘 학습한 내용을 회고록으로 입력하고 AI 분석을 통해 복습해보세요."
-          description-tone="accent"
-          divider
-        >
+        <PageHeading title="새 회고 작성" description="오늘 학습한 내용을 회고록으로 입력하고 AI 분석을 통해 복습해보세요." description-tone="accent">
           <template #actions>
-            <BaseSelect
-              v-model="selectedLectureId"
-              :options="lectureOptions"
-            />
+            <BaseSelect v-model="selectedLectureId" :options="lectureOptions" />
           </template>
         </PageHeading>
 
-        <form
-          class="reflection-page__form"
-          @submit.prevent="submit"
-        >
-          <QuestionField
-            v-model="form.understood"
-            number="01"
-            label="오늘 잘 이해한 내용"
-            placeholder="오늘 학습한 내용 중 명확하게 이해하고 내 것으로 만든 부분을 작성해 주세요."
-            required
-          />
+        <form class="reflection-page__form" @submit.prevent="submit">
+          <QuestionField v-model="form.understood" number="01" label="잘 이해한 내용"
+            placeholder="학습한 내용 중 명확하게 이해하고 내 것으로 만든 부분을 작성해 주세요." required />
 
-          <QuestionField
-            v-model="form.difficult"
-            number="02"
-            label="아직 어려운 내용"
-            placeholder="강의나 실습 중 헷갈렸거나 추가적인 설명이 필요한 부분을 작성해 주세요."
-            required
-          />
+          <QuestionField v-model="form.difficult" number="02" label="아직 어려운 내용"
+            placeholder="강의나 실습 중 헷갈렸거나 추가적인 설명이 필요한 부분을 작성해 주세요." required />
 
-          <QuestionField
-            v-model="form.wantsToLearn"
-            number="03"
-            label="추가로 공부하고 싶은 내용"
-            placeholder="오늘 내용을 바탕으로 더 깊이 찾아보거나 공부해보고 싶은 주제를 적어주세요."
-          />
+          <QuestionField v-model="form.wantsToLearn" number="03" label="추가로 공부하고 싶은 내용"
+            placeholder="오늘 내용을 바탕으로 더 깊이 찾아보거나 공부해보고 싶은 주제를 적어주세요." />
 
-          <p
-            v-if="error"
-            class="reflection-page__error"
-          >
+          <p v-if="error" class="reflection-page__error">
             {{ error }}
           </p>
 
           <div class="reflection-page__footer">
-            <BaseButton
-              variant="primary"
-              type="submit"
-              rounded
-              :disabled="loading"
-            >
+            <BaseButton variant="primary" type="submit" rounded :disabled="loading">
               {{
                 loading
                   ? '회고록과 강의자료 분석 중...'
