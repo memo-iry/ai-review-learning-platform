@@ -28,15 +28,35 @@ const loading = ref(true)
 const error = ref('')
 
 const lectureId = computed(() => {
-  return Number(route.params.lectureId)
+  const value = Number(
+    route.params.lectureId,
+  )
+
+  return Number.isNaN(value)
+    ? null
+    : value
 })
 
 const reflectionId = computed(() => {
-  return Number(route.query.reflectionId)
+  const value =
+    route.query.reflectionId
+
+  if (!value) {
+    return null
+  }
+
+  const parsedValue = Number(value)
+
+  return Number.isNaN(parsedValue)
+    ? null
+    : parsedValue
 })
 
 const review = computed(() => {
-  return analysis.value?.reviewMaterial ?? null
+  return (
+    analysis.value?.reviewMaterial ??
+    null
+  )
 })
 
 const lectureTitle = computed(() => {
@@ -52,7 +72,8 @@ const lectureTitle = computed(() => {
 
 const understandingScore = computed(() => {
   return Number(
-    analysis.value?.understandingScore ?? 0,
+    analysis.value?.understandingScore ??
+    0,
   )
 })
 
@@ -69,31 +90,74 @@ const understandingLevel = computed(() => {
 })
 
 async function loadAnalysis() {
-  if (
-    Number.isNaN(reflectionId.value) ||
-    reflectionId.value <= 0
-  ) {
-    analysis.value = null
-    error.value =
-      '선택한 회고록 ID가 없습니다.'
-    loading.value = false
-    return
-  }
-
   loading.value = true
   error.value = ''
 
   try {
+    const cachedAnalysis =
+      learningState.analysis
+
+    /*
+     * ReflectionPage에서 방금 분석한 결과이고
+     * reflectionId도 일치하면 API 재호출 없이 표시합니다.
+     */
+    if (
+      cachedAnalysis &&
+      reflectionId.value &&
+      Number(
+        cachedAnalysis.reflectionId,
+      ) === reflectionId.value
+    ) {
+      analysis.value =
+        cachedAnalysis
+
+      return
+    }
+
+    /*
+     * 기존 방식처럼 reflectionId 없이 이동했지만
+     * 분석 결과가 메모리에 있으면 해당 결과를 표시합니다.
+     */
+    if (
+      cachedAnalysis &&
+      !reflectionId.value
+    ) {
+      analysis.value =
+        cachedAnalysis
+
+      return
+    }
+
+    /*
+     * HistoryPage에서 이동한 경우에는
+     * 선택한 reflectionId로 분석 결과를 조회합니다.
+     */
+    if (!reflectionId.value) {
+      throw new Error(
+        '선택한 회고록 ID가 없습니다.',
+      )
+    }
+
     const response =
       await api.analyzeReflection(
         reflectionId.value,
       )
 
+    const loadedAnalysis =
+      response?.data ??
+      response
+
+    if (!loadedAnalysis) {
+      throw new Error(
+        '분석 결과가 없습니다.',
+      )
+    }
+
     analysis.value =
-      response?.data ?? response
+      loadedAnalysis
 
     learningState.analysis =
-      analysis.value
+      loadedAnalysis
   } catch (requestError) {
     console.error(
       '분석 결과 조회 실패',
@@ -116,23 +180,30 @@ function moveToDashboard() {
   })
 }
 
-function moveToReview() {
-  router.push({
-    name: 'review',
-  })
-}
-
 function moveToReflection() {
+  if (!lectureId.value) {
+    router.push({
+      name: 'dashboard',
+    })
+
+    return
+  }
+
   router.push({
     name: 'reflection',
+
     params: {
-      lectureId: lectureId.value,
+      lectureId:
+        lectureId.value,
     },
   })
 }
 
 watch(
-  reflectionId,
+  () => [
+    route.params.lectureId,
+    route.query.reflectionId,
+  ],
   loadAnalysis,
   {
     immediate: true,
@@ -144,38 +215,74 @@ watch(
   <AppLayout>
     <PageContainer size="md">
       <main class="analysis-page">
-        <!-- 로딩 중: 실제 결과 화면과 같은 배치로 자리를 잡아둡니다. -->
+        <!-- 로딩 화면 -->
         <template v-if="loading">
           <header class="page-heading">
-            <Skeleton width="60%" height="30px" />
+            <Skeleton
+              width="60%"
+              height="30px"
+            />
           </header>
 
           <section class="level-section">
-            <Skeleton width="52px" height="11px" />
+            <Skeleton
+              width="52px"
+              height="11px"
+            />
+
             <div class="level-result">
-              <Skeleton width="60px" height="23px" radius="13px" />
+              <Skeleton
+                width="60px"
+                height="23px"
+                radius="13px"
+              />
             </div>
           </section>
 
           <section class="content-section">
-            <Skeleton width="100%" height="150px" radius="5px" />
+            <Skeleton
+              width="100%"
+              height="150px"
+              radius="5px"
+            />
           </section>
 
           <section class="content-section">
             <div class="section-heading">
-              <Skeleton width="56px" height="12px" />
+              <Skeleton
+                width="56px"
+                height="12px"
+              />
             </div>
 
             <div class="stack-list">
-              <div v-for="placeholder in 4" :key="placeholder" class="result-card">
-                <Skeleton width="120px" height="17px" />
-                <Skeleton width="100%" height="13px" style="margin-top: 14px" />
-                <Skeleton width="85%" height="13px" style="margin-top: 8px" />
+              <div
+                v-for="placeholder in 4"
+                :key="placeholder"
+                class="result-card"
+              >
+                <Skeleton
+                  width="120px"
+                  height="17px"
+                />
+
+                <Skeleton
+                  width="100%"
+                  height="13px"
+                  style="margin-top: 14px"
+                />
+
+                <Skeleton
+                  width="85%"
+                  height="13px"
+                  style="margin-top: 8px"
+                />
               </div>
             </div>
           </section>
         </template>
 
+        <!-- 분석 결과 -->
         <template v-else-if="analysis">
           <header class="page-heading">
             <h1>
@@ -187,6 +294,9 @@ watch(
             <p class="section-label">
               학습 단계
             </p>
+
+            <div class="section-line"></div>
+
             <div class="level-result">
               <span class="level-badge">
                 {{ understandingLevel }}단계
@@ -195,8 +305,12 @@ watch(
           </section>
 
           <section class="content-section">
-            <AnalysisScoreCard :score="understandingScore" :reason="analysis.analysisReason
-              " />
+            <AnalysisScoreCard
+              :score="understandingScore"
+              :reason="
+                analysis.analysisReason
+              "
+            />
           </section>
 
           <section class="content-section">
@@ -205,7 +319,9 @@ watch(
             </div>
 
             <div class="stack-list">
-              <article class="result-card understood-card">
+              <article
+                class="result-card understood-card"
+              >
                 <h3>이해한 부분</h3>
 
                 <p>
@@ -216,7 +332,9 @@ watch(
                 </p>
               </article>
 
-              <article class="result-card weakness-card">
+              <article
+                class="result-card weakness-card"
+              >
                 <h3>보완이 필요한 부분</h3>
 
                 <p>
@@ -234,13 +352,19 @@ watch(
 
                 <h3>핵심 개념</h3>
 
-                <ol v-if="
-                  review?.coreConcepts?.length
-                " class="concept-list">
-                  <li v-for="(
-concept,
-  index
-                    ) in review.coreConcepts" :key="index">
+                <ol
+                  v-if="
+                    review?.coreConcepts?.length
+                  "
+                  class="concept-list"
+                >
+                  <li
+                    v-for="(
+                      concept,
+                      index
+                    ) in review.coreConcepts"
+                    :key="index"
+                  >
                     {{ concept }}
                   </li>
                 </ol>
@@ -255,7 +379,10 @@ concept,
                   <h3>예제 코드</h3>
                 </div>
 
-                <pre v-if="review?.exampleCode" class="example-code"><code>{{ review.exampleCode }}</code></pre>
+                <pre
+                  v-if="review?.exampleCode"
+                  class="example-code"
+                ><code>{{ review.exampleCode }}</code></pre>
 
                 <p v-else>
                   생성된 예제 코드가 없습니다.
@@ -265,15 +392,26 @@ concept,
           </section>
 
           <footer class="page-footer">
-            <BaseButton variant="primary" @click="moveToDashboard">
+            <BaseButton
+              variant="primary"
+              @click="moveToDashboard"
+            >
               대시보드로 이동
             </BaseButton>
           </footer>
         </template>
 
-        <EmptyState v-else title="결과를 불러오지 못했습니다" :description="error">
+        <!-- 오류 화면 -->
+        <EmptyState
+          v-else
+          title="결과를 불러오지 못했습니다"
+          :description="error"
+        >
           <template #action>
-            <BaseButton variant="pill" @click="moveToReflection">
+            <BaseButton
+              variant="pill"
+              @click="moveToReflection"
+            >
               회고록으로 이동
             </BaseButton>
           </template>
@@ -284,7 +422,6 @@ concept,
 </template>
 
 <style scoped>
-/* 폭·중앙정렬·좌우 패딩은 PageContainer가 담당합니다. */
 .analysis-page {
   width: 100%;
 }
@@ -293,7 +430,6 @@ concept,
   margin-bottom: 36px;
 }
 
-.eyebrow,
 .card-eyebrow {
   margin: 0 0 10px;
   color: #d65427;
@@ -337,11 +473,6 @@ concept,
   background: #272727;
   color: #ffffff;
   font-size: 10px;
-}
-
-.level-text {
-  color: #555c67;
-  font-size: 12px;
 }
 
 .content-section {
@@ -426,5 +557,19 @@ concept,
   display: flex;
   justify-content: flex-end;
   margin-top: 30px;
+}
+
+@media (max-width: 720px) {
+  .page-heading h1 {
+    font-size: 24px;
+  }
+
+  .result-card {
+    padding: 18px;
+  }
+
+  .page-footer {
+    justify-content: stretch;
+  }
 }
 </style>
