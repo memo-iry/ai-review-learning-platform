@@ -35,6 +35,11 @@ export const api = {
     http.get("/quizzes/attempts", { params: { userId } }),
   submitQuiz: (quizId, body) => http.post(`/quizzes/${quizId}/attempts`, body),
 
+  getAnalysis: (userId, lectureId) =>
+    request(
+      `/analyses?userId=${encodeURIComponent(userId)}&lectureId=${encodeURIComponent(lectureId)}`,
+    ),
+
   // 운영자 전용
   // 별도 객체로 두되 파일은 나누지 않는다. baseURL 도 인증 방식도 같아서 axios
   // 인스턴스를 나눌 이유가 없고, 엔드포인트가 하나뿐이라 파일을 나눌 이유도 아직 없다.
