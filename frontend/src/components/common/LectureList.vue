@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { api } from '@/api/client.js'
 import { selectLecture } from '@/stores/learning.js'
 import Skeleton from '@/components/common/Skeleton.vue'
+import PageHeading from '@/components/common/PageHeading.vue'
 
 const router = useRouter()
 
@@ -151,25 +152,14 @@ onMounted(loadLectures)
 <template>
   <section class="course-list-page">
     <header class="page-header">
-      <h1>강의 목록</h1>
+      <PageHeading title="강의 목록" />
 
-      <div
-        class="sort-toggle"
-        :class="{ week: sortType === 'week' }"
-      >
-        <button
-          type="button"
-          :class="{ active: sortType === 'latest' }"
-          @click="sortType = 'latest'"
-        >
+      <div class="sort-toggle" :class="{ week: sortType === 'week' }">
+        <button type="button" :class="{ active: sortType === 'latest' }" @click="sortType = 'latest'">
           최신순
         </button>
 
-        <button
-          type="button"
-          :class="{ active: sortType === 'week' }"
-          @click="sortType = 'week'"
-        >
+        <button type="button" :class="{ active: sortType === 'week' }" @click="sortType = 'week'">
           주차순
         </button>
       </div>
@@ -180,15 +170,8 @@ onMounted(loadLectures)
     </p>
 
     <!-- 로딩 중: 실제 강의 카드와 같은 크기·배치로 자리를 잡아둡니다. -->
-    <div
-      v-if="isLoading"
-      class="lecture-list"
-    >
-      <article
-        v-for="placeholder in 4"
-        :key="placeholder"
-        class="lecture-item"
-      >
+    <div v-if="isLoading" class="lecture-list">
+      <article v-for="placeholder in 4" :key="placeholder" class="lecture-item">
         <div class="lecture-content">
           <Skeleton width="48px" height="17px" radius="10px" />
           <Skeleton width="230px" height="16px" style="margin: 9px 0 6px" />
@@ -202,29 +185,16 @@ onMounted(loadLectures)
       </article>
     </div>
 
-    <p
-      v-else-if="errorMessage"
-      class="message"
-    >
+    <p v-else-if="errorMessage" class="message">
       {{ errorMessage }}
     </p>
 
-    <p
-      v-else-if="sortedLectures.length === 0"
-      class="message"
-    >
+    <p v-else-if="sortedLectures.length === 0" class="message">
       등록된 강의가 없습니다.
     </p>
 
-    <div
-      v-else
-      class="lecture-list"
-    >
-      <article
-        v-for="lecture in sortedLectures"
-        :key="getLectureId(lecture)"
-        class="lecture-item"
-      >
+    <div v-else class="lecture-list">
+      <article v-for="lecture in sortedLectures" :key="getLectureId(lecture)" class="lecture-item">
         <div class="lecture-content">
           <span class="week-badge">
             {{ lecture.week }}주차
@@ -244,11 +214,7 @@ onMounted(loadLectures)
             {{ formatLectureDate(lecture) }}
           </time>
 
-          <button
-            type="button"
-            class="reflection-button"
-            @click="moveToReflection(lecture)"
-          >
+          <button type="button" class="reflection-button" @click="moveToReflection(lecture)">
             회고록 작성 →
           </button>
         </div>
@@ -406,5 +372,14 @@ onMounted(loadLectures)
   color: #9ca3af;
   font-size: 13px;
   text-align: center;
+}
+
+.page-heading__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
 }
 </style>
