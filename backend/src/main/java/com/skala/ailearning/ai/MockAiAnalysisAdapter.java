@@ -1,6 +1,5 @@
 package com.skala.ailearning.ai;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,8 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 규칙 기반 분석기. 개념 사전에서 회고에 등장한 개념을 찾아 이해 / 취약으로 나눈다.
+ *
+ * 프로파일을 걸지 않는다. openai 프로파일에서도 이 빈은 살아 있어야 한다.
+ * 모델 호출이 실패했을 때 물러날 곳이기 때문이다.
+ * 어느 구현을 쓸지는 OpenAiAnalysisAdapter 의 @Primary 가 정한다.
+ */
 @Component
-@Profile("!openai")
 public class MockAiAnalysisAdapter implements AiAnalysisPort {
 
     private static final int BASE_SCORE = 55;

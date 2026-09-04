@@ -53,3 +53,14 @@ app:
     # 프론트에 로그인이 붙기 전까지는 false 로 두어 기존 흐름을 막지 않는다.
     # true 로 바꾸면 로그인하지 않은 요청은 401, 남의 데이터 요청은 403 이 된다.
     enforce: ${SECURITY_ENFORCE:false}
+
+  ai:
+    # openai 프로파일에서만 쓰인다. 기본 프로파일은 규칙 기반 어댑터를 쓰므로 키가 없어도 뜬다.
+    # 키는 backend/.env 에 OPENAI_API_KEY 로 둔다. 저장소에 올라가지 않는다.
+    api-key: ${OPENAI_API_KEY:}
+    base-url: https://api.openai.com/v1
+    model: gpt-4o-mini
+    timeout-seconds: 60
+    # 모델 호출이나 응답 파싱이 실패하면 규칙 기반 결과로 물러난다.
+    # 분석이 실패했다고 화면이 비면 안 된다.
+    fallback-to-rules: true
