@@ -46,23 +46,11 @@ const router = createRouter({
       },
     },
     {
-      // 실제 주소: /home/analysis
-      path: "/analysis",
-      name: "analysis",
-      component: () => import("../pages/AnalysisPage.vue"),
+      path: '/analysis/:lectureId',
+      name: 'analysis',
+      component: () => import('../pages/AnalysisPage.vue'),
       meta: {
-        step: "AI 분석",
-        requiresAnalysis: true,
-      },
-    },
-    {
-      // 실제 주소: /home/review
-      path: "/review",
-      name: "review",
-      component: () => import("../pages/ReviewPage.vue"),
-      meta: {
-        step: "복습자료",
-        requiresAnalysis: true,
+        step: 'AI 분석',
       },
     },
     {

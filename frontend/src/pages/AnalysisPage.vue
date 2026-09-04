@@ -1,84 +1,438 @@
 <script setup>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { learningState } from '../stores/learning.js'
+import {
+  computed,
+  ref,
+  watch,
+} from 'vue'
 
+import {
+  useRoute,
+  useRouter,
+} from 'vue-router'
+
+import { api } from '@/api/client.js'
+import { learningState } from '@/stores/learning.js'
+
+import AppLayout from '@/components/AppLayout.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
-import PageHeading from '@/components/common/PageHeading.vue'
-import AppSection from '@/components/common/AppSection.vue'
-import AppLayout from '@/components/AppLayout.vue'
-
 import AnalysisScoreCard from '@/components/analysis/AnalysisScoreCard.vue'
-import AnalysisResultGrid from '@/components/analysis/AnalysisResultGrid.vue'
 
+const route = useRoute()
 const router = useRouter()
 
-const analysis = computed(() => learningState.analysis)
+const analysis = ref(null)
+const loading = ref(true)
+const error = ref('')
+
+const lectureId = computed(() => {
+  return Number(route.params.lectureId)
+})
+
+const reflectionId = computed(() => {
+  return Number(route.query.reflectionId)
+})
+
+const review = computed(() => {
+  return analysis.value?.reviewMaterial ?? null
+})
+
+const lectureTitle = computed(() => {
+  return (
+    learningState.lecture?.title ??
+    learningState.lecture?.lectureName ??
+    learningState.lecture?.courseName ??
+    learningState.lecture?.name ??
+    review.value?.title ??
+    `강의 #${lectureId.value}`
+  )
+})
+
+const understandingScore = computed(() => {
+  return Number(
+    analysis.value?.understandingScore ?? 0,
+  )
+})
+
+const understandingLevel = computed(() => {
+  if (understandingScore.value < 40) {
+    return 1
+  }
+
+  if (understandingScore.value < 80) {
+    return 2
+  }
+
+  return 3
+})
+
+async function loadAnalysis() {
+  if (
+    Number.isNaN(reflectionId.value) ||
+    reflectionId.value <= 0
+  ) {
+    analysis.value = null
+    error.value =
+      '선택한 회고록 ID가 없습니다.'
+    loading.value = false
+    return
+  }
+
+  loading.value = true
+  error.value = ''
+
+  try {
+    const response =
+      await api.analyzeReflection(
+        reflectionId.value,
+      )
+
+    analysis.value =
+      response?.data ?? response
+
+    learningState.analysis =
+      analysis.value
+  } catch (requestError) {
+    console.error(
+      '분석 결과 조회 실패',
+      requestError,
+    )
+
+    analysis.value = null
+
+    error.value =
+      requestError.message ??
+      '분석 결과를 불러오지 못했습니다.'
+  } finally {
+    loading.value = false
+  }
+}
+
+function moveToDashboard() {
+  router.push({
+    name: 'dashboard',
+  })
+}
 
 function moveToReview() {
-  router.push({ name: 'review' })
+  router.push({
+    name: 'review',
+  })
 }
 
 function moveToReflection() {
-  router.push({ name: 'reflection' })
+  router.push({
+    name: 'reflection',
+    params: {
+      lectureId: lectureId.value,
+    },
+  })
 }
+
+watch(
+  reflectionId,
+  loadAnalysis,
+  {
+    immediate: true,
+  },
+)
 </script>
 
 <template>
   <section>
     <AppLayout />
   </section>
-  <div class="analysis-page">
-    <template v-if="analysis">
-      <PageHeading eyebrow="AI 이해도 분석" title="회고록을 바탕으로 학습 상태를 분석했습니다." />
 
-      <AppSection title="현재 이해도">
-        <AnalysisScoreCard :score="analysis.understandingScore" :reason="analysis.analysisReason" />
-      </AppSection>
+  <main class="analysis-page">
+    <p
+      v-if="loading"
+      class="state-message"
+    >
+      분석 결과를 불러오는 중입니다.
+    </p>
 
-      <AppSection title="분석 결과">
-        <AnalysisResultGrid :understood-summary="analysis.understoodSummary"
-          :weakness-summary="analysis.weaknessSummary" />
-      </AppSection>
+    <template v-else-if="analysis">
+      <header class="page-heading">
+        <h1>
+          {{ lectureTitle }}
+        </h1>
+      </header>
 
-      <div class="analysis-page__footer">
-        <BaseButton variant="primary" @click="moveToReview">
-          맞춤형 복습자료 보기
+      <section class="level-section">
+        <p class="section-label">
+          학습 단계
+        </p>
+        <div class="level-result">
+          <span class="level-badge">
+            {{ understandingLevel }}단계
+          </span>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <AnalysisScoreCard
+          :score="understandingScore"
+          :reason="
+            analysis.analysisReason
+          "
+        />
+      </section>
+
+      <section class="content-section">
+        <div class="section-heading">
+          <h2>분석 결과</h2>
+        </div>
+
+        <div class="stack-list">
+          <article
+            class="result-card understood-card"
+          >
+            <h3>이해한 부분</h3>
+
+            <p>
+              {{
+                analysis.understoodSummary ||
+                '분석 내용이 없습니다.'
+              }}
+            </p>
+          </article>
+
+          <article
+            class="result-card weakness-card"
+          >
+            <h3>보완이 필요한 부분</h3>
+
+            <p>
+              {{
+                analysis.weaknessSummary ||
+                '분석 내용이 없습니다.'
+              }}
+            </p>
+          </article>
+
+          <article class="result-card">
+            <p class="card-eyebrow">
+              맞춤 복습
+            </p>
+
+            <h3>핵심 개념</h3>
+
+            <ol
+              v-if="
+                review?.coreConcepts?.length
+              "
+              class="concept-list"
+            >
+              <li
+                v-for="(
+                  concept,
+                  index
+                ) in review.coreConcepts"
+                :key="index"
+              >
+                {{ concept }}
+              </li>
+            </ol>
+
+            <p v-else>
+              생성된 핵심 개념이 없습니다.
+            </p>
+          </article>
+
+          <article class="result-card">
+            <div class="card-title-area">
+              <h3>예제 코드</h3>
+            </div>
+
+            <pre
+              v-if="review?.exampleCode"
+              class="example-code"
+            ><code>{{ review.exampleCode }}</code></pre>
+
+            <p v-else>
+              생성된 예제 코드가 없습니다.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <footer class="page-footer">
+        <BaseButton
+          variant="primary"
+          @click="moveToDashboard"
+        >
+          대시보드로 이동
         </BaseButton>
-      </div>
+      </footer>
     </template>
 
-    <EmptyState v-else title="아직 분석 결과가 없습니다" description="회고록을 작성하면 AI가 이해도를 분석해 드립니다.">
+    <EmptyState
+      v-else
+      title="결과를 불러오지 못했습니다"
+      :description="error"
+    >
       <template #action>
-        <BaseButton variant="pill" @click="moveToReflection">
-          회고록 작성하기
+        <BaseButton
+          variant="pill"
+          @click="moveToReflection"
+        >
+          회고록으로 이동
         </BaseButton>
       </template>
     </EmptyState>
-  </div>
+  </main>
 </template>
 
 <style scoped>
 .analysis-page {
+  width: 100%;
   max-width: 860px;
   margin: 0 auto;
-  padding: var(--space-8) var(--space-6);
+  padding: 32px 24px;
 }
 
-.analysis-page__footer {
-  margin-top: var(--space-8);
+.state-message {
+  padding: 60px 20px;
+  color: #9298a1;
+  text-align: center;
+}
+
+.page-heading {
+  margin-bottom: 36px;
+}
+
+.eyebrow,
+.card-eyebrow {
+  margin: 0 0 10px;
+  color: #d65427;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.page-heading h1 {
+  margin: 0;
+  color: #2f3339;
+  font-size: 30px;
+  font-weight: 400;
+}
+
+.level-section {
+  margin-bottom: 34px;
+}
+
+.section-label {
+  margin: 0;
+  color: #8b919b;
+  font-size: 11px;
+}
+
+.section-line {
+  height: 1px;
+  margin-top: 10px;
+  background: #e4e6e9;
+}
+
+.level-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 14px;
+}
+
+.level-badge {
+  padding: 5px 12px;
+  border-radius: 13px;
+  background: #272727;
+  color: #ffffff;
+  font-size: 10px;
+}
+
+.level-text {
+  color: #555c67;
+  font-size: 12px;
+}
+
+.content-section {
+  margin-top: 34px;
+}
+
+.section-heading {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dedfe2;
+}
+
+.section-heading h2 {
+  margin: 0;
+  color: #777e88;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.stack-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.result-card {
+  padding: 22px;
+  border: 1px solid #e1e3e6;
+  border-radius: 5px;
+  background: #ffffff;
+}
+
+.result-card h3 {
+  margin: 0 0 12px;
+  color: #343a43;
+  font-size: 17px;
+  font-weight: 400;
+}
+
+.result-card p {
+  margin: 0;
+  color: #8b919b;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.understood-card {
+  border-left: 3px solid #d65427;
+}
+
+.weakness-card {
+  border-color: #ecd2c8;
+  background: #fffaf6;
+}
+
+.card-title-area {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.concept-list {
+  margin: 0;
+  padding-left: 22px;
+  color: #707782;
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.example-code {
+  margin: 4px 0 0;
+  padding: 18px;
+  overflow-x: auto;
+  border-radius: 5px;
+  background: #f5f6f7;
+  color: #3f4652;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.page-footer {
   display: flex;
   justify-content: flex-end;
-}
-
-@media (max-width: 720px) {
-  .analysis-page {
-    padding: var(--space-6) var(--space-4);
-  }
-
-  .analysis-page__footer {
-    justify-content: stretch;
-  }
+  margin-top: 30px;
 }
 </style>
