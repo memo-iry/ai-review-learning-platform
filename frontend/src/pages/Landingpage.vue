@@ -232,7 +232,7 @@ const loginhandler = () => {
 .features__eyebrow {
   position: absolute;
   top: 29%;
-  left: 40%;
+  left: 41.5%;
   transform: translate(-50%, -50%);
   z-index: 10;
   margin: 0;
@@ -244,6 +244,7 @@ const loginhandler = () => {
   color: #b4b3b398;
   pointer-events: none;
   word-break: keep-all;
+  white-space: nowrap;
 }
 
 .features__body {

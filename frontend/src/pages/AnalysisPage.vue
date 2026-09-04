@@ -27,6 +27,8 @@ const analysis = ref(null)
 const loading = ref(true)
 const error = ref('')
 
+const selectedLevel = ref(1)
+
 const lectureId = computed(() => {
   const value = Number(
     route.params.lectureId,
@@ -89,6 +91,16 @@ const understandingLevel = computed(() => {
   return 3
 })
 
+watch(
+  understandingLevel,
+  (level) => {
+    selectedLevel.value = level
+  },
+  {
+    immediate: true,
+  },
+)
+
 async function loadAnalysis() {
   loading.value = true
   error.value = ''
@@ -96,11 +108,6 @@ async function loadAnalysis() {
   try {
     const cachedAnalysis =
       learningState.analysis
-
-    /*
-     * ReflectionPage에서 방금 분석한 결과이고
-     * reflectionId도 일치하면 API 재호출 없이 표시합니다.
-     */
     if (
       cachedAnalysis &&
       reflectionId.value &&
@@ -113,25 +120,14 @@ async function loadAnalysis() {
 
       return
     }
-
-    /*
-     * 기존 방식처럼 reflectionId 없이 이동했지만
-     * 분석 결과가 메모리에 있으면 해당 결과를 표시합니다.
-     */
     if (
       cachedAnalysis &&
       !reflectionId.value
     ) {
       analysis.value =
         cachedAnalysis
-
       return
     }
-
-    /*
-     * HistoryPage에서 이동한 경우에는
-     * 선택한 reflectionId로 분석 결과를 조회합니다.
-     */
     if (!reflectionId.value) {
       throw new Error(
         '선택한 회고록 ID가 없습니다.',
@@ -233,8 +229,8 @@ watch(
             <div class="level-result">
               <Skeleton
                 width="60px"
-                height="23px"
-                radius="13px"
+                height="28px"
+                radius="15px"
               />
             </div>
           </section>
@@ -298,9 +294,24 @@ watch(
             <div class="section-line"></div>
 
             <div class="level-result">
-              <span class="level-badge">
-                {{ understandingLevel }}단계
-              </span>
+              <button
+                v-for="level in 3"
+                :key="level"
+                type="button"
+                class="level-badge"
+                :class="{
+                  'level-badge--active':
+                    selectedLevel === level,
+                }"
+                :aria-pressed="
+                  selectedLevel === level
+                "
+                @click="
+                  selectedLevel = level
+                "
+              >
+                {{ level }}단계
+              </button>
             </div>
           </section>
 
@@ -423,31 +434,12 @@ watch(
 </template>
 
 <style scoped>
-.dashboard-button {
-  border-color: #d65427;
-  background: #d65427;
-  color: #ffffff;
-}
-
-.dashboard-button:hover {
-  border-color: #bd4620;
-  background: #bd4620;
-  color: #ffffff;
-}
-
 .analysis-page {
   width: 100%;
 }
 
 .page-heading {
   margin-bottom: 36px;
-}
-
-.card-eyebrow {
-  margin: 0 0 10px;
-  color: #d65427;
-  font-size: 11px;
-  font-weight: 600;
 }
 
 .page-heading h1 {
@@ -481,11 +473,46 @@ watch(
 }
 
 .level-badge {
-  padding: 5px 12px;
-  border-radius: 13px;
+  min-width: 64px;
+  padding: 7px 15px;
+  border: 0;
+  border-radius: 15px;
+  background: #d5d7db;
+  color: #777d86;
+  font-family:
+    "AppleMyungjo",
+    "Noto Serif KR",
+    serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.level-badge:hover {
+  background: #bfc2c7;
+  color: #4e535b;
+}
+
+/*
+ * 현재 선택된 단계 버튼
+ */
+.level-badge--active {
   background: #272727;
   color: #ffffff;
-  font-size: 10px;
+  font-weight: 700;
+}
+
+.level-badge--active:hover {
+  background: #272727;
+  color: #ffffff;
+}
+
+.level-badge:active {
+  transform: scale(0.96);
 }
 
 .content-section {
@@ -541,6 +568,13 @@ watch(
   background: #fffaf6;
 }
 
+.card-eyebrow {
+  margin: 0 0 10px;
+  color: #d65427;
+  font-size: 11px;
+  font-weight: 600;
+}
+
 .card-title-area {
   display: flex;
   align-items: center;
@@ -572,9 +606,31 @@ watch(
   margin-top: 30px;
 }
 
+.dashboard-button {
+  border-color: #d65427;
+  background: #d65427;
+  color: #ffffff;
+}
+
+.dashboard-button:hover {
+  border-color: #bd4620;
+  background: #bd4620;
+  color: #ffffff;
+}
+
 @media (max-width: 720px) {
   .page-heading h1 {
     font-size: 24px;
+  }
+
+  .level-result {
+    gap: 8px;
+  }
+
+  .level-badge {
+    min-width: 58px;
+    padding: 6px 12px;
+    font-size: 11px;
   }
 
   .result-card {

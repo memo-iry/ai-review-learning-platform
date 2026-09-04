@@ -233,7 +233,7 @@ onMounted(loadHistory)
     <PageContainer>
       <main class="my-reflection-page">
         <PageHeading
-          title="나의 회고록"
+          title="회고 기록"
         />
 
         <AppSection title="학습 및 회고 현황">
