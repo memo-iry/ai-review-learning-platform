@@ -28,6 +28,7 @@ async function signOut() {
       <p v-if="authState.user" class="role">{{ roleLabel }}</p>
 
       <nav class="step-list">
+        <RouterLink to="/dashboard" class="step">대시보드</RouterLink>
         <RouterLink to="/courses" class="step">강의 목록</RouterLink>
         <RouterLink to="/history" class="step">회고 기록</RouterLink>
         <RouterLink to="/quiz" class="step">QUIZ</RouterLink>
