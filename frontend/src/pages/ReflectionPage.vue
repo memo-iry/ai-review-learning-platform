@@ -94,7 +94,6 @@ async function submit() {
       )
     }
 
-    // 1. 회고록 저장
     const reflectionResponse =
       await api.createReflection({
         userId: currentUserId(),
@@ -116,7 +115,6 @@ async function submit() {
       )
     }
 
-    // 2. 저장한 회고록 분석
     const analysisResponse =
       await api.analyzeReflection(
         reflectionId,
@@ -132,10 +130,6 @@ async function submit() {
       )
     }
 
-    /*
-     * 작성 내용이 너무 짧은 경우
-     * 백엔드에서 reviewMaterial이 null로 반환됩니다.
-     */
     if (!analysis.reviewMaterial) {
       error.value =
         analysis.weaknessSummary ??
@@ -144,10 +138,8 @@ async function submit() {
       return
     }
 
-    // 3. 방금 생성한 결과 저장
     learningState.analysis = analysis
 
-    // 4. 강의 ID와 회고 ID를 같이 전달
     await router.push({
       name: 'analysis',
 

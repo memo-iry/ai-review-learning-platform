@@ -181,7 +181,6 @@ function moveToReflection() {
     router.push({
       name: 'dashboard',
     })
-
     return
   }
 

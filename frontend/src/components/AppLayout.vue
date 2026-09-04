@@ -94,10 +94,6 @@ async function moveToTodayReflection() {
   error.value = ''
 
   try {
-    /*
-     * 프로젝트에 getLectures가 있으면 사용하고,
-     * 기존 API가 getCourses이면 그것을 사용합니다.
-     */
     const loadLectureList =
       api.getLectures ??
       api.getCourses
@@ -120,13 +116,8 @@ async function moveToTodayReflection() {
       )
     }
 
-    const todayKey =
-      getDateKey(new Date())
+    const todayKey = getDateKey(new Date())
 
-    /*
-     * 오늘 날짜와 일치하는 강의를 찾고,
-     * 날짜가 없다면 첫 번째 강의를 사용합니다.
-     */
     const todayLecture =
       lectures.find((lecture) => {
         return (
@@ -148,13 +139,8 @@ async function moveToTodayReflection() {
       )
     }
 
-    learningState.lecture =
-      todayLecture
+    learningState.lecture = todayLecture
 
-    /*
-     * 라우트 이름 불일치를 피하기 위해
-     * 주소로 이동합니다.
-     */
     await router.push(
       `/reflection/${lectureId}`,
     )
