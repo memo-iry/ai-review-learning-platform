@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { learningState } from "../stores/learning.js";
+import { authState, restoreSession } from "../stores/auth.js";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -114,7 +115,19 @@ const router = createRouter({
   },
 });
 
-router.beforeEach((to) => {
+const PUBLIC = ["landing", "login"];
+
+router.beforeEach(async (to) => {
+  await restoreSession();
+
+  if (!authState.user && !PUBLIC.includes(to.name)) {
+    return { name: "login" };
+  }
+
+  if (authState.user && to.name === "login") {
+    return { name: "dashboard" };
+  }
+
   if (to.meta.requiresLecture && !learningState.lecture) {
     return {
       name: "dashboard",

@@ -1,7 +1,21 @@
 <script setup>
-import { RouterLink } from 'vue-router'
+import { computed } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { authState, logout } from '../stores/auth.js'
+import { resetLearning } from '../stores/learning.js'
 
-const username = 'STUDENT USER'
+const router = useRouter()
+
+const username = computed(() => authState.user?.name ?? '게스트')
+const roleLabel = computed(() =>
+  authState.user?.role === 'ADMIN' ? '운영자' : '교육생',
+)
+
+async function signOut() {
+  await logout()
+  resetLearning()
+  router.push({ name: 'login' })
+}
 </script>
 
 <template>
@@ -11,12 +25,22 @@ const username = 'STUDENT USER'
         {{ username }}
       </div>
 
+      <p v-if="authState.user" class="role">{{ roleLabel }}</p>
+
       <nav class="step-list">
-        <RouterLink to="/reflection/:lectureId" class="step">회고록 작성</RouterLink>
         <RouterLink to="/courses" class="step">강의 목록</RouterLink>
-        <RouterLink to="/analysis" class="step">회고 기록</RouterLink>
-        <RouterLink to="/review" class="step">QUIZ</RouterLink>
+        <RouterLink to="/history" class="step">회고 기록</RouterLink>
+        <RouterLink to="/quiz" class="step">QUIZ</RouterLink>
       </nav>
+
+      <button
+        v-if="authState.user"
+        type="button"
+        class="signout"
+        @click="signOut"
+      >
+        로그아웃
+      </button>
     </aside>
 
     <main class="page">
@@ -33,11 +57,36 @@ const username = 'STUDENT USER'
 }
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
   width: 128px;
   min-height: 100vh;
   flex-shrink: 0;
   padding: 16px 14px;
   background: #ffffff;
+}
+
+.role {
+  margin: -22px 0 24px;
+  color: #b3b5bd;
+  font-family: "AppleMyungjo", "Noto Serif KR", serif;
+  font-size: 10px;
+}
+
+.signout {
+  margin-top: auto;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #b3b5bd;
+  font-family: "AppleMyungjo", "Noto Serif KR", serif;
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.signout:hover {
+  color: #5e626b;
 }
 
 .brand {

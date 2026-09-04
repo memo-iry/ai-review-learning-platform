@@ -9,6 +9,7 @@ import BaseSelect from '@/components/common/BaseSelect.vue'
 import BaseButton from '@/components/common/BaseButton.vue'
 import QuestionField from '@/components/reflection/QuestionField.vue'
 import AppLayout from '@/components/AppLayout.vue'
+import { currentUserId } from '../stores/auth.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -40,7 +41,7 @@ async function submit() {
   error.value = ''
   try {
     const reflection = await api.createReflection({
-      userId: 2,
+      userId: currentUserId(),
       lectureId: Number(route.params.lectureId),
       ...form,
     })

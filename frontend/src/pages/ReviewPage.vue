@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { api } from '../api/client.js'
 import { learningState } from '../stores/learning.js'
 import AppLayout from '../components/AppLayout.vue'
+import { currentUserId } from '../stores/auth.js'
 
 const router = useRouter()
 
@@ -24,7 +25,7 @@ async function submitQuiz() {
   try {
     const answers = review.value.quiz.map((_, index) => selected[index])
     result.value = await api.submitQuiz(review.value.quizId, {
-      userId: learningState.userId,
+      userId: currentUserId(),
       answers,
     })
   } catch (requestError) {

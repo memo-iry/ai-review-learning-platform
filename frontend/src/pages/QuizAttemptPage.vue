@@ -13,6 +13,7 @@ import QuizOptionRow from '@/components/quiz/QuizOptionRow.vue'
 import QuizTutorPanel from '@/components/quiz/QuizTutorPanel.vue'
 import QuizStatusCard from '@/components/quiz/QuizStatusCard.vue'
 import AppLayout from '@/components/AppLayout.vue'
+import { currentUserId } from '../stores/auth.js'
 
 const route = useRoute()
 const router = useRouter()
@@ -70,7 +71,7 @@ function goNext() {
 
 async function submitAnswers() {
   try {
-    const userId = 2 // TODO: 인증 붙으면 세션 사용자로 교체
+    const userId = currentUserId()
     await api.submitQuiz(quiz.value.quizId, { userId, answers: answers.value })
     router.push({ name: 'quiz' })
   } catch (requestError) {

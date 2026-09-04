@@ -9,6 +9,7 @@ import WrittenReflection from '../components/common/WrittenReflection.vue'
 import WeeklyReflectionChart from '../components/common/WeeklyReflectionChart.vue'
 import WeaknessAnalysis from '../components/common/WeaknessAnalysis.vue'
 import LearningHistory from '../components/common/LearningHistory.vue'
+import { currentUserId } from '../stores/auth.js'
 
 const LEVEL_NAMES = ['', '인지', '이해', '적용', '구현']
 
@@ -31,7 +32,7 @@ onMounted(async () => {
   try {
     const [lectureList, masteryResult] = await Promise.all([
       api.getLectures(),
-      api.getMastery(learningState.userId),
+      api.getMastery(currentUserId()),
     ])
     lectures.value = lectureList
     mastery.value = masteryResult

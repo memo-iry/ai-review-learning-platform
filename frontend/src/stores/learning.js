@@ -1,7 +1,6 @@
 import { reactive } from 'vue'
 
 export const learningState = reactive({
-  userId: 2,
   lecture: null,
   reflection: null,
   analysis: null,

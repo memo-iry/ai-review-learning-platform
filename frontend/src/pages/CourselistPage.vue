@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { api } from '../api/client.js'
 import { learningState, selectLecture } from '../stores/learning.js'
 import AppLayout from '../components/AppLayout.vue'
+import { currentUserId } from '../stores/auth.js'
 
 const LEVEL_NAMES = ['', '인지', '이해', '적용', '구현']
 
@@ -26,7 +27,7 @@ onMounted(async () => {
   try {
     const [lectureList, masteryResult] = await Promise.all([
       api.getLectures(),
-      api.getMastery(learningState.userId),
+      api.getMastery(currentUserId()),
     ])
     lectures.value = lectureList
     mastery.value = masteryResult

@@ -9,11 +9,12 @@ import StatCard from '@/components/common/StatCard.vue'
 import RecordRow from '@/components/common/RecordRow.vue'
 import EmptyState from '@/components/common/EmptyState.vue'
 import AppLayout from '@/components/AppLayout.vue'
+import { currentUserId } from '../stores/auth.js'
 
 const router = useRouter()
 
 // TODO: 로그인 사용자 식별자는 인증 상태가 생기면 그쪽에서 받아오도록 교체
-const userId = 2
+const userId = currentUserId()
 
 const reflections = ref([])
 const lectureMap = ref({})

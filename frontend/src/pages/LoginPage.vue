@@ -1,16 +1,40 @@
 <script setup>
 import { ref } from 'vue'
-import {useRouter} from 'vue-router'
+import { useRouter } from 'vue-router'
 import booksstack2 from '../assets/books-stack2.png'
+import { login } from '../stores/auth.js'
 
+// 데모 계정. 역할 버튼을 누르면 해당 계정이 채워진다.
+// 실제 역할은 서버가 정한다 — 클라이언트가 고른 값은 인증에 쓰지 않는다.
+const DEMO = {
+  student: { email: 'learner@skala.com', password: 'demo' },
+  admin: { email: 'admin@skala.com', password: 'demo' },
+}
+
+const router = useRouter()
 const role = ref('student')
 const email = ref('')
+const password = ref('')
+const loading = ref(false)
+const error = ref('')
 
-defineEmits(['submit'])
-const router = useRouter()
- 
-function goToLogin() {
-  router.push({ name: 'login' })
+function selectRole(next) {
+  role.value = next
+  email.value = DEMO[next].email
+  password.value = DEMO[next].password
+}
+
+async function submit() {
+  loading.value = true
+  error.value = ''
+  try {
+    await login(email.value, password.value)
+    router.push({ name: 'dashboard' })
+  } catch (requestError) {
+    error.value = requestError.message
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
@@ -35,13 +59,26 @@ function goToLogin() {
       </div>
 
       <div class="login__field">
-        <span class="login__label">역할 선택</span>
+        <label class="login__label" for="login-password">비밀번호</label>
+        <input
+          id="login-password"
+          v-model="password"
+          type="password"
+          class="login__input"
+          placeholder="비밀번호"
+          autocomplete="current-password"
+          @keyup.enter="submit"
+        />
+      </div>
+
+      <div class="login__field">
+        <span class="login__label">데모 계정 채우기</span>
         <div class="login__roles">
           <button
             type="button"
             class="login__role-btn"
             :class="{ 'is-active': role === 'student' }"
-            @click="role = 'student'"
+            @click="selectRole('student')"
           >
             학생
           </button>
@@ -49,19 +86,22 @@ function goToLogin() {
             type="button"
             class="login__role-btn"
             :class="{ 'is-active': role === 'admin' }"
-            @click="role = 'admin'"
+            @click="selectRole('admin')"
           >
             운영진
           </button>
         </div>
       </div>
 
+      <p v-if="error" class="login__error">{{ error }}</p>
+
       <button
         type="button"
         class="login__submit"
-        @click="$emit('submit', { email, role })"
+        :disabled="loading"
+        @click="submit"
       >
-        로그인하기
+        {{ loading ? '확인 중...' : '로그인하기' }}
       </button>
 
       <div class="login__divider" />
@@ -201,6 +241,17 @@ function goToLogin() {
 .login__submit:hover {
   background: var(--text-strong);
   color: #fff;
+}
+
+.login__submit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.login__error {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #c0392b;
 }
 
 .login__divider {
