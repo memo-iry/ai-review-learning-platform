@@ -2,14 +2,13 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api/client.js'
-import { learningState, selectLecture } from '../stores/learning.js'
+import { selectLecture } from '../stores/learning.js'
 import AppLayout from '../components/AppLayout.vue'
 import PageContainer from '../components/common/PageContainer.vue'
 import TodayStudy from '../components/common/TodayStudy.vue'
 import WrittenReflection from '../components/common/WrittenReflection.vue'
 import WeeklyReflectionChart from '../components/common/WeeklyReflectionChart.vue'
 import WeaknessAnalysis from '../components/common/WeaknessAnalysis.vue'
-import LearningHistory from '../components/common/LearningHistory.vue'
 import { currentUserId } from '../stores/auth.js'
 import WeeklyClassCalendar from '../components/common/WeeklyClassCalendar.vue'
 
@@ -78,20 +77,6 @@ const getDatePart = (type) => {
 const currentDate = `${getDatePart('month')}/${getDatePart('day')}`
 const currentWeekday = getDatePart('weekday')
 
-const quizRecords = [
-  {
-    title: '데이터 분석을 위한 Python 이해',
-    score: 88,
-  },
-  {
-    title: 'Java, SpringBoot, Rest API 구현',
-    score: 76,
-  },
-  {
-    title: 'Agile 방법론 및 MSA 개발',
-    score: 100,
-  },
-]
 </script>
 
 <template>
@@ -137,42 +122,269 @@ const quizRecords = [
 <style scoped>
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  grid-template-rows: auto 120px 220px 280px;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  /*
+   * 글자가 커진 만큼 카드 높이도 확대
+   * 오늘 수업: 150px
+   * 주간 기록: 280px
+   * 하단 분석: 320px
+   */
+  grid-template-rows:
+    auto
+    150px
+    290px
+    320px;
+
   grid-template-areas:
     "date date"
     "today reflection"
     "record record"
     "emotion weakness";
-  gap: 10px;
+
+  gap: 14px;
   align-content: start;
 }
 
 .dashboard-date {
   grid-area: date;
+  color: #2f3339;
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.dashboard-date hr {
+  margin: 5px 0 0;
+  border: 0;
+  border-top: 1px solid #343434;
 }
 
 .today-lesson {
   grid-area: today;
+  min-width: 0;
 }
 
 .reflection-card {
   grid-area: reflection;
+  min-width: 0;
 }
 
 .recent-record {
   grid-area: record;
-}
-
-.learning-progress {
-  grid-area: progress;
+  min-width: 0;
+  min-height: 280px;
+  overflow: visible;
 }
 
 .emotion-analysis {
   grid-area: emotion;
+  min-width: 0;
 }
 
 .weakness-analysis {
   grid-area: weakness;
+  min-width: 0;
+}
+
+/*
+ * 오늘 수업 카드의 모든 글자
+ * 실제 하위 컴포넌트의 클래스명과 관계없이 적용
+ */
+.today-lesson :deep(*) {
+  font-size: 17px !important;
+  line-height: 1.5 !important;
+}
+
+/*
+ * 작성한 회고록 카드의 모든 글자
+ */
+.reflection-card :deep(*) {
+  font-size: 17px !important;
+  line-height: 1.5 !important;
+}
+
+/*
+ * 위쪽 주황색 카드 제목
+ */
+.today-lesson :deep(h2),
+.today-lesson :deep(h3),
+.today-lesson :deep(.card-label),
+.reflection-card :deep(h2),
+.reflection-card :deep(h3),
+.reflection-card :deep(.card-label) {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+}
+
+/*
+ * Spring AI, AI 웹 서비스 설계
+ */
+.today-lesson :deep(p),
+.today-lesson :deep(span),
+.today-lesson :deep(.lecture-title),
+.reflection-card :deep(select),
+.reflection-card :deep(.lecture-select) {
+  color: #4b5563;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+/*
+ * 버튼은 카드 글자보다 약간 작게 유지
+ */
+.today-lesson :deep(button),
+.today-lesson :deep(button *),
+.reflection-card :deep(button),
+.reflection-card :deep(button *) {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+}
+
+/*
+ * 주간 회고 작성 기록 카드
+ */
+.recent-record :deep(*) {
+  line-height: 1.5 !important;
+}
+
+/*
+ * 주간 회고 작성 기록 제목
+ * line-height와 여백을 확보하여 위쪽 잘림 방지
+ */
+.recent-record :deep(h2),
+.recent-record :deep(h3),
+.recent-record :deep(.card-title),
+.recent-record :deep(.calendar-title) {
+  margin-top: 0 !important;
+  padding-top: 2px;
+  overflow: visible !important;
+  color: #4b5563;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  line-height: 1.6 !important;
+}
+
+/*
+ * 주간 날짜 및 강의명
+ */
+.recent-record :deep(p),
+.recent-record :deep(span),
+.recent-record :deep(li) {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+/*
+ * 주간 기록 카드 내부 버튼
+ */
+.recent-record :deep(button),
+.recent-record :deep(button *) {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+/*
+ * 주간 기록 컴포넌트의 최상위 요소가
+ * 고정 높이로 인해 잘리지 않도록 설정
+ */
+.recent-record :deep(> *) {
+  width: 100%;
+  min-height: 100%;
+  box-sizing: border-box;
+  overflow: visible !important;
+}
+
+/*
+ * 하단 분석 카드 제목
+ */
+.emotion-analysis :deep(h2),
+.emotion-analysis :deep(h3),
+.weakness-analysis :deep(h2),
+.weakness-analysis :deep(h3) {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  line-height: 1.5 !important;
+}
+
+/*
+ * 하단 분석 카드 일반 글자
+ */
+.emotion-analysis :deep(p),
+.emotion-analysis :deep(span),
+.emotion-analysis :deep(li),
+.weakness-analysis :deep(p),
+.weakness-analysis :deep(span),
+.weakness-analysis :deep(li) {
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "date"
+      "today"
+      "reflection"
+      "record"
+      "emotion"
+      "weakness";
+  }
+
+  .today-lesson,
+  .reflection-card {
+    min-height: 150px;
+  }
+
+  .recent-record {
+    min-height: 300px;
+  }
+
+  .emotion-analysis,
+  .weakness-analysis {
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-grid {
+    gap: 12px;
+  }
+
+  .dashboard-date {
+    font-size: 17px;
+  }
+
+  .today-lesson :deep(*),
+  .reflection-card :deep(*) {
+    font-size: 15px !important;
+  }
+
+  .today-lesson :deep(p),
+  .today-lesson :deep(span),
+  .reflection-card :deep(select),
+  .reflection-card :deep(.lecture-select) {
+    font-size: 16px !important;
+  }
+
+  .recent-record {
+    min-height: 340px;
+    overflow-x: auto;
+  }
+
+  .recent-record :deep(h2),
+  .recent-record :deep(h3),
+  .recent-record :deep(.card-title),
+  .recent-record :deep(.calendar-title) {
+    font-size: 16px !important;
+  }
 }
 </style>

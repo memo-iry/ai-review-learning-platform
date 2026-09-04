@@ -250,10 +250,10 @@ function moveToCurrentWeek() {
 .weekly-calendar-card {
   box-sizing: border-box;
   width: 100%;
-  height: 220px;
-  min-height: 220px;
-  max-height: 220px;
-  overflow: hidden;
+  height: 100%;
+  min-height: 270px;
+  max-height: none;
+  overflow: visible;
 }
 
 .calendar-container {
@@ -261,7 +261,7 @@ function moveToCurrentWeek() {
   width: 100%;
   height: 100%;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .calendar-header {
@@ -269,64 +269,81 @@ function moveToCurrentWeek() {
   align-items: center;
   justify-content: space-between;
   box-sizing: border-box;
-  height: 42px;
-  padding-bottom: 9px;
+  min-height: 58px;
+  padding-bottom: 10px;
   border-bottom: 1px solid #edf0f3;
 }
 
+/* 주간 회고 작성 기록 */
 .calendar-header h3 {
   margin: 0;
   color: #4b5563;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
+/* 날짜 범위 */
 .calendar-header p {
   margin: 4px 0 0;
   color: #9ca3af;
-  font-size: 10px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 .calendar-navigation {
   display: flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .calendar-navigation button {
-  min-width: 26px;
-  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0;
   border: 1px solid #e5e7eb;
-  border-radius: 13px;
+  border-radius: 15px;
   background: #ffffff;
   color: #6b7280;
+  font-size: 15px;
   cursor: pointer;
 }
 
+.calendar-navigation button:hover {
+  border-color: #d65427;
+  color: #d65427;
+}
+
 .calendar-navigation .today-button {
-  width: 52px;
+  width: 60px;
   padding: 0;
   color: #d65427;
-  font-size: 10px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .week-calendar {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns:
+    repeat(7, minmax(0, 1fr));
   box-sizing: border-box;
   width: 100%;
-  height: 150px;
+  min-height: 195px;
   padding-top: 10px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .day-column {
   box-sizing: border-box;
   min-width: 0;
-  height: 140px;
-  padding: 6px;
-  overflow: hidden;
+  min-height: 185px;
+  padding: 7px;
+  overflow: visible;
   border-right: 1px solid #edf0f3;
 }
 
@@ -343,82 +360,121 @@ function moveToCurrentWeek() {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 30px;
+  min-height: 34px;
   white-space: nowrap;
 }
 
 .date-label {
   color: #6b7280;
-  font-size: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
   white-space: nowrap;
 }
 
 .today .date-label {
-  padding: 5px 8px;
-  border-radius: 13px;
+  padding: 6px 10px;
+  border-radius: 15px;
   background: #d65427;
   color: #ffffff;
+  font-weight: 600;
 }
 
 .reflection-list {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  height: 92px;
-  margin-top: 5px;
-  gap: 5px;
+  width: 100%;
+  height: 135px;
+  margin-top: 6px;
+  gap: 6px;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-gutter: stable;
 }
 
 .reflection-list::-webkit-scrollbar {
-  width: 3px;
+  width: 4px;
+}
+
+.reflection-list::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .reflection-list::-webkit-scrollbar-thumb {
-  border-radius: 3px;
+  border-radius: 4px;
   background: #d8dce2;
 }
 
 .reflection-item {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
-  min-height: 27px;
+
+  /*
+   * 글자가 여러 줄이면 항목 높이도
+   * 함께 늘어나도록 고정 높이를 제거
+   */
+  min-height: 32px;
+  height: auto;
   flex-shrink: 0;
-  gap: 4px;
-  overflow: hidden;
-  padding: 5px;
-  border-radius: 3px;
+
+  gap: 5px;
+  padding: 7px 6px;
+  overflow: visible;
+  border-radius: 4px;
   background: #fff1eb;
 }
 
 .completed-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
+  margin-top: 6px;
   flex-shrink: 0;
   border-radius: 50%;
   background: #d65427;
 }
 
+/*
+ * 강의명을 한 줄로 자르지 않고
+ * 필요한 만큼 줄바꿈해서 표시
+ */
 .reflection-title {
   min-width: 0;
-  overflow: hidden;
+  flex: 1;
+  overflow: visible;
   color: #5f6570;
-  font-size: 9px;
-  line-height: 17px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .empty-reflection {
   color: #c5c9d0;
-  font-size: 8px;
-  line-height: 27px;
+  font-size: 11px;
+  line-height: 32px;
   text-align: center;
   white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .weekly-calendar-card {
+    min-width: 760px;
+    min-height: 270px;
+  }
+
+  .calendar-container {
+    overflow-x: auto;
+  }
+
+  .week-calendar {
+    min-width: 720px;
+  }
 }
 </style>
