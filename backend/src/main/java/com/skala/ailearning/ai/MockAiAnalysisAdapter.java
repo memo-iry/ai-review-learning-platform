@@ -4,8 +4,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -49,8 +51,41 @@ public class MockAiAnalysisAdapter implements AiAnalysisPort {
                 command.lectureTitle() + " 맞춤 복습",
                 corePoints(weak),
                 weak.getFirst().exampleCode(),
-                weak.stream().limit(3).map(MockAiAnalysisAdapter::toQuizItem).toList()
+                weak.stream().limit(3).map(MockAiAnalysisAdapter::toQuizItem).toList(),
+                conceptSummaries(understood, weak, command)
         );
+    }
+
+    /**
+     * 개념별 상태 서술. 학습자가 실제로 쓴 문장을 근거로 함께 남긴다.
+     * Mock 이 없는 사실을 지어내지 않도록, 분석해서 알아낸 것(이해 / 취약)과
+     * 그 판단의 근거가 된 회고 원문만 담는다.
+     * 실제 LLM 어댑터로 교체하면 같은 자리에 모델이 쓴 서술이 들어간다.
+     */
+    private static Map<String, String> conceptSummaries(List<Concept> understood,
+                                                        List<Concept> weak,
+                                                        AnalysisCommand command) {
+        Map<String, String> summaries = new LinkedHashMap<>();
+
+        understood.forEach(concept -> summaries.put(concept.name(),
+                "%s 강의 회고에서 이해한 개념으로 분류했다. 회고 원문: \"%s\""
+                        .formatted(command.lectureTitle(), trim(command.understood()))));
+
+        weak.forEach(concept -> summaries.put(concept.name(),
+                "%s 강의 회고에서 보완이 필요한 개념으로 분류했다. 회고 원문: \"%s\" 복습 지점: %s"
+                        .formatted(command.lectureTitle(),
+                                trim(command.difficult()),
+                                String.join(" / ", concept.reviewPoints()))));
+
+        return summaries;
+    }
+
+    private static String trim(String text) {
+        if (text == null || text.isBlank()) {
+            return "";
+        }
+        String cleaned = text.strip().replaceAll("\\s+", " ");
+        return cleaned.length() <= 120 ? cleaned : cleaned.substring(0, 120) + "…";
     }
 
     private static AiAnalysisResult.QuizItem toQuizItem(Concept concept) {

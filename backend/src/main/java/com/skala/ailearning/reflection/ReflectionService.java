@@ -179,13 +179,17 @@ public class ReflectionService {
         }
 
         private void updateMastery(User user, AiAnalysisResult result) {
-                result.understoodTopics().forEach(
-                                topic -> upsertMastery(user, topic, result.understandingScore() + UNDERSTOOD_BONUS));
-                result.weakTopics().forEach(
-                                topic -> upsertMastery(user, topic, result.understandingScore() - WEAK_PENALTY));
+                Map<String, String> summaries = result.conceptSummaries();
+
+                result.understoodTopics().forEach(topic -> upsertMastery(
+                                user, topic, result.understandingScore() + UNDERSTOOD_BONUS,
+                                summaries.get(topic)));
+                result.weakTopics().forEach(topic -> upsertMastery(
+                                user, topic, result.understandingScore() - WEAK_PENALTY,
+                                summaries.get(topic)));
         }
 
-        private void upsertMastery(User user, String conceptName, int rawScore) {
+        private void upsertMastery(User user, String conceptName, int rawScore, String summary) {
                 int score = Math.max(0, Math.min(100, rawScore));
 
                 ConceptMastery mastery = masteryRepository
@@ -196,6 +200,11 @@ public class ReflectionService {
                 mastery.setConceptName(conceptName);
                 mastery.setScore(score);
                 mastery.setLevel(ConceptMastery.levelOf(score));
+
+                // 서술은 분석기가 준 것만 쓴다. 없으면 이전 서술을 지우지 않고 그대로 둔다.
+                if (summary != null && !summary.isBlank()) {
+                        mastery.setSummary(summary);
+                }
 
                 masteryRepository.save(mastery);
         }

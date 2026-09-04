@@ -18,6 +18,7 @@ public record MasteryResponse(
             String conceptName,
             int level,
             int score,
+            String summary,
             OffsetDateTime updatedAt
     ) {
         static ConceptScore from(ConceptMastery mastery) {
@@ -25,6 +26,7 @@ public record MasteryResponse(
                     mastery.getConceptName(),
                     mastery.getLevel(),
                     mastery.getScore() == null ? 0 : mastery.getScore(),
+                    mastery.getSummary(),
                     mastery.getUpdatedAt()
             );
         }
