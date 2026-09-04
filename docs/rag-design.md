@@ -31,11 +31,14 @@ record AnalysisCommand(
 )
 ```
 
-RAG 를 붙일 때 이 구조를 바꾸지 않습니다. **검색된 강의자료 본문을 필드 하나로 더하면 됩니다.**
+RAG 를 붙일 때 **이 구조를 바꾸지 않습니다.** 검색된 강의자료를 여기에 필드로 더하지 않습니다.
 
-```java
-    List<RetrievedChunk> context      // 추가될 필드
-```
+더하면 두 가지를 잃습니다. 첫째, 계약이 바뀌므로 &ldquo;교체 지점 한 곳&rdquo;이 성립하지 않습니다.
+둘째, 검색 결과를 누가 만들어 넣느냐는 질문이 생기고, 결국 Service 가 Vector Store 를 알게 됩니다.
+그러면 AI 구현 상세를 어댑터 안에 감춘다는 설계가 무너집니다.
+
+**검색은 어댑터 안에서 일어납니다.** `AnalysisCommand` 에 이미 강의와 회고가 들어 있으므로
+어댑터는 그것만으로 질의를 만들 수 있습니다.
 
 ### 출력
 
@@ -62,23 +65,55 @@ record AiAnalysisResult(
 
 ## RAG 파이프라인
 
+사전 작업은 강의자료가 등록될 때 한 번 돌립니다.
+
 ```
 강의 PDF
    ↓  Parsing            본문 추출
    ↓  Chunking           토큰 기준 분할
    ↓  Embedding          벡터화
    ↓  Vector Store       pgvector — 이미 Supabase PostgreSQL 을 쓰므로 확장으로 붙인다
+                         chunk 마다 lecture_id 를 메타데이터로 함께 저장한다
+```
+
+분석 요청이 오면 어댑터 안에서 검색과 생성이 이어집니다.
+
+```
+Controller
    ↓
-회고 → Query 생성         difficult 와 wantsToLearn 을 검색어로
-   ↓  유사도 검색          해당 강의의 자료로 범위를 제한한다
+Service                        AnalysisCommand 만 넘긴다. Vector Store 를 모른다
    ↓
-System Prompt + Retrieved Context + 학습자 회고 + 누적 이해도
-   ↓  LLM
+AiAnalysisPort
+   ↓
+OpenAiAnalysisAdapter
+   ├── 회고 기반 검색 질의 생성      difficult · wantsToLearn 을 검색어로
+   ├── Vector Store 검색           WHERE lecture_id = 현재 강의
+   ├── Reflection Analyzer
+   ├── Review Generator
+   └── Quiz Generator
+        ↓
 AiAnalysisResult
 ```
 
-검색 범위를 **해당 강의의 자료로 제한**하는 것이 중요합니다. 전체 강의에서 검색하면
-아직 배우지 않은 내용이 복습자료에 섞입니다.
+Retrieved Context 는 **어댑터 내부 데이터**입니다. 밖으로 나가지 않습니다.
+그래서 Mock 을 실제 RAG 로 바꿔도 Controller · Service · `AnalysisCommand` · `AiAnalysisResult` 가
+전부 그대로입니다.
+
+### 강의 범위는 프롬프트가 아니라 검색에서 막습니다
+
+전체 강의에서 검색하면 아직 배우지 않은 내용이 복습자료에 섞입니다.
+이것을 LLM 에게 &ldquo;다른 강의 내용은 쓰지 마세요&rdquo;라고 부탁해서 막지 않습니다.
+
+```sql
+SELECT content
+FROM lecture_chunks
+WHERE lecture_id = :lectureId          -- 메타데이터 필터로 먼저 자른다
+ORDER BY embedding <=> :queryVector
+LIMIT :topK;
+```
+
+**애초에 다른 강의의 chunk 가 Context 에 들어오지 않게 합니다.**
+프롬프트 규칙은 지켜지지 않을 수 있지만 검색 조건은 지켜집니다.
 
 ## 프롬프트를 셋으로 나눕니다
 
@@ -87,8 +122,11 @@ AiAnalysisResult
 
 ```
 OpenAiAnalysisAdapter.analyze(command)
-    ├─ 1. Reflection Analyzer   → understandingScore · topics · summaries
-    ├─ 2. Review Generator      → reviewTitle · coreConcepts · exampleCode · conceptSummaries
+    ├─ 1. Reflection Analyzer   → understandingScore · analysisReason
+    │                             understoodSummary · weaknessSummary
+    │                             understoodTopics · weakTopics · recommendedTopics
+    │                             conceptSummaries
+    ├─ 2. Review Generator      → reviewTitle · coreConcepts · exampleCode
     └─ 3. Quiz Generator        → quiz
          └─ 셋을 합쳐 AiAnalysisResult 하나로 반환
 ```
@@ -97,9 +135,16 @@ OpenAiAnalysisAdapter.analyze(command)
 
 | 프롬프트 | 입력 | 출력 |
 |---|---|---|
-| Reflection Analyzer | 회고 + 강의 정보 + 누적 이해도 | 이해 / 취약 개념, 점수, 근거 |
-| Review Generator | 취약 개념 + 검색된 강의자료 | 복습 설명, 예제 코드, 개념별 서술 |
+| Reflection Analyzer | 회고 + 강의 정보 + 검색된 자료 + 누적 이해도 | 점수, 판단 근거, 이해 / 취약 개념, **개념별 상태 서술** |
+| Review Generator | 취약 개념 + 검색된 강의자료 | 복습 제목, 핵심 개념, 예제 코드 |
 | Quiz Generator | 취약 개념 + 검색된 강의자료 | 4지선다 문항, 정답, 해설 |
+
+`conceptSummaries` 는 **Reflection Analyzer 의 출력입니다.**
+&ldquo;이 학습자가 이 개념에서 지금 어떤 상태이고 무엇을 근거로 그렇게 보았는가&rdquo;는
+회고를 판단하는 단계에서 나오는 것이지, 복습자료를 쓰는 단계에서 나오는 것이 아닙니다.
+
+Review Generator 는 이 서술을 **입력으로 받아** 학습자 수준에 맞춰 설명합니다.
+같은 값을 두 프롬프트가 만들면 어느 쪽이 맞는지 정할 수 없습니다.
 
 ## 대표 시스템 프롬프트 — Reflection Analyzer
 
@@ -116,8 +161,9 @@ OpenAiAnalysisAdapter.analyze(command)
    "아마 이것도 모를 것이다" 같은 추측을 하지 않습니다.
    판단의 근거는 반드시 회고 문장 안에 있어야 합니다.
 
-2. 강의자료(Context)에 없는 개념은 취약 개념으로 잡지 않습니다.
-   이번 강의에서 다루지 않은 내용은 복습 대상이 아닙니다.
+2. 주어진 Context 에 없는 개념은 취약 개념으로 잡지 않습니다.
+   Context 에는 이번 강의의 자료만 들어옵니다. 다른 강의 내용이 섞여 있는지
+   판단하려 하지 마십시오. 그 일은 검색 단계에서 이미 끝났습니다.
 
 3. 같은 개념이 이해한 것과 어려운 것에 모두 나오면 취약으로 분류합니다.
    학습자가 어렵다고 말한 쪽을 우선합니다.
