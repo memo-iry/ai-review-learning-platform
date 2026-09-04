@@ -205,8 +205,8 @@ onMounted(loadMaterials)
           <QuestionField
             v-model="form.understood"
             number="01"
-            label="오늘 잘 이해한 내용"
-            placeholder="오늘 학습한 내용 중 명확하게 이해하고 내 것으로 만든 부분을 작성해 주세요."
+            label="잘 이해한 내용"
+            placeholder="학습한 내용 중 명확하게 이해하고 내 것으로 만든 부분을 작성해 주세요."
             required
           />
 

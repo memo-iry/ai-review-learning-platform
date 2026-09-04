@@ -393,7 +393,8 @@ watch(
 
           <footer class="page-footer">
             <BaseButton
-              variant="primary"
+              variant="pill"
+              class="dashboard-button"
               @click="moveToDashboard"
             >
               대시보드로 이동
@@ -422,6 +423,18 @@ watch(
 </template>
 
 <style scoped>
+.dashboard-button {
+  border-color: #d65427;
+  background: #d65427;
+  color: #ffffff;
+}
+
+.dashboard-button:hover {
+  border-color: #bd4620;
+  background: #bd4620;
+  color: #ffffff;
+}
+
 .analysis-page {
   width: 100%;
 }
