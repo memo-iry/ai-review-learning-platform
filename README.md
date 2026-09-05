@@ -206,34 +206,18 @@ http://localhost:8080/v3/api-docs          OpenAPI JSON
 받아 신뢰하지 않습니다 — 받는 순간 그것은 인증이 아니라 요청값이라 위조됩니다.
 
 ```
+로그인하지 않은 요청은 401
 LEARNER   자기 데이터만 조회·수정 가능. 남의 userId 요청은 403
 ADMIN     교육생 데이터 조회 가능 + /api/admin/** 접근 가능
 ```
+
+`/api/auth/**` 와 `/api/lectures/**` 는 공개입니다. 나머지는 세션이 필요합니다.
 
 브라우저에서 호출할 때 `credentials: 'include'` 가 필요합니다.
 
 ```js
 fetch(url, { credentials: 'include', ... })
 ```
-
-### 통제 스위치
-
-```yaml
-app:
-  security:
-    enforce: ${SECURITY_ENFORCE:false}
-```
-
-프론트에 로그인 화면이 붙기 전까지 `false` 로 둡니다. 이 상태에서는 로그인하지 않아도
-기존 흐름이 그대로 동작합니다. 로그인이 붙으면 `true` 로 바꿉니다.
-
-```
-false   로그인 없이 호출 가능. /api/admin/** 은 그래도 막힘
-true    로그인 없으면 401, 남의 데이터면 403
-```
-
-**운영자 전용 경로는 스위치와 무관하게 항상 막힙니다.** 스위치는 프론트를 기다리는
-임시 조치이고, 프론트는 운영자 API 를 호출하지 않으므로 완화할 이유가 없습니다.
 
 ### 범위 밖
 

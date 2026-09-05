@@ -47,9 +47,3 @@ springdoc:
 app:
   cors:
     allowed-origin: ${FRONTEND_ORIGIN:http://localhost:5173}
-
-  security:
-    # 세션 기반 접근 통제 스위치.
-    # 프론트에 로그인이 붙기 전까지는 false 로 두어 기존 흐름을 막지 않는다.
-    # true 로 바꾸면 로그인하지 않은 요청은 401, 남의 데이터 요청은 403 이 된다.
-    enforce: ${SECURITY_ENFORCE:false}
