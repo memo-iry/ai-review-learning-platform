@@ -97,10 +97,6 @@ async function loadAnalysis() {
     const cachedAnalysis =
       learningState.analysis
 
-    /*
-     * ReflectionPage에서 방금 분석한 결과이고
-     * reflectionId도 일치하면 API 재호출 없이 표시합니다.
-     */
     if (
       cachedAnalysis &&
       reflectionId.value &&
@@ -114,10 +110,6 @@ async function loadAnalysis() {
       return
     }
 
-    /*
-     * 기존 방식처럼 reflectionId 없이 이동했지만
-     * 분석 결과가 메모리에 있으면 해당 결과를 표시합니다.
-     */
     if (
       cachedAnalysis &&
       !reflectionId.value
@@ -128,10 +120,6 @@ async function loadAnalysis() {
       return
     }
 
-    /*
-     * HistoryPage에서 이동한 경우에는
-     * 선택한 reflectionId로 분석 결과를 조회합니다.
-     */
     if (!reflectionId.value) {
       throw new Error(
         '선택한 회고록 ID가 없습니다.',
@@ -215,8 +203,7 @@ watch(
   <AppLayout>
     <PageContainer size="md">
       <main class="analysis-page">
-        <!-- 로딩 화면 -->
-        <template v-if="loading">
+                <template v-if="loading">
           <header class="page-heading">
             <Skeleton
               width="60%"
@@ -282,8 +269,7 @@ watch(
           </section>
         </template>
 
-        <!-- 분석 결과 -->
-        <template v-else-if="analysis">
+                <template v-else-if="analysis">
           <header class="page-heading">
             <h1>
               {{ lectureTitle }}
@@ -402,8 +388,7 @@ watch(
           </footer>
         </template>
 
-        <!-- 오류 화면 -->
-        <EmptyState
+                <EmptyState
           v-else
           title="결과를 불러오지 못했습니다"
           :description="error"

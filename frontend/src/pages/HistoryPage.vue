@@ -20,10 +20,7 @@ import PageContainer from '@/components/common/PageContainer.vue'
 
 const router = useRouter()
 
-
-// TODO: 로그인 사용자 식별자는 인증 상태가 생기면 그쪽에서 받아오도록 교체
 const userId = currentUserId()
-
 
 const reflections = ref([])
 const lectureMap = ref({})
@@ -315,10 +312,6 @@ onMounted(loadHistory)
   box-sizing: border-box;
 }
 
-/*
- * max-width, margin, padding은
- * PageContainer가 공통으로 관리합니다.
- */
 .my-reflection-page__stats {
   display: grid;
   grid-template-columns:

@@ -1,8 +1,7 @@
 <script setup>
 defineProps({
-  /** 스피너 아래 보여줄 안내 문구. 없으면 스피너만 표시 */
   label: { type: String, default: '' },
-  /** sm | md */
+
   size: { type: String, default: 'md' },
 })
 </script>

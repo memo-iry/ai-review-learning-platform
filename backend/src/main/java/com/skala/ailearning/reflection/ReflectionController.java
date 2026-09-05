@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/reflections")
 public class ReflectionController {
-
         private final ReflectionService reflectionService;
         private final com.skala.ailearning.common.AccessGuard accessGuard;
 

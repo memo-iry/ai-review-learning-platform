@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface LectureRepository extends JpaRepository<Lecture, Long> {
-
     List<Lecture> findAllByOrderByLectureDateDesc();
 
     List<Lecture> findByLectureDate(LocalDate lectureDate);

@@ -85,7 +85,6 @@ async function loadLectures() {
       ? response
       : response.data ?? []
 
-    // 날짜가 오래된 강의부터 정렬
     const chronologicalLectures = [...lectureList].sort(
       (first, second) => {
         const firstDate = getDateTimestamp(first)
@@ -99,7 +98,6 @@ async function loadLectures() {
           return firstDate - secondDate
         }
 
-        // 날짜가 없거나 같은 날짜면 ID가 작은 강의를 먼저 배치
         return (
           Number(getLectureId(first)) -
           Number(getLectureId(second))
@@ -107,7 +105,6 @@ async function loadLectures() {
       },
     )
 
-    // 가장 오래된 강의부터 1주차 부여
     lectures.value = chronologicalLectures.map(
       (lecture, index) => ({
         ...lecture,
@@ -126,13 +123,11 @@ const sortedLectures = computed(() => {
   const copiedLectures = [...lectures.value]
 
   if (sortType.value === 'latest') {
-    // 최신 날짜, 높은 주차부터 출력
     return copiedLectures.sort(
       (first, second) => second.week - first.week,
     )
   }
 
-  // 오래된 날짜, 1주차부터 출력
   return copiedLectures.sort(
     (first, second) => first.week - second.week,
   )
@@ -169,8 +164,7 @@ onMounted(loadLectures)
       전체 강의 목록
     </p>
 
-    <!-- 로딩 중: 실제 강의 카드와 같은 크기·배치로 자리를 잡아둡니다. -->
-    <div v-if="isLoading" class="lecture-list">
+        <div v-if="isLoading" class="lecture-list">
       <article v-for="placeholder in 4" :key="placeholder" class="lecture-item">
         <div class="lecture-content">
           <Skeleton width="48px" height="17px" radius="10px" />

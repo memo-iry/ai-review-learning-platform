@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class AdminService {
-
     private static final int WEAKEST_LIMIT = 5;
 
     private final ConceptMasteryRepository masteryRepository;

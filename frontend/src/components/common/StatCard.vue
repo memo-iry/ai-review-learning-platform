@@ -5,14 +5,14 @@ import ProgressRing from './ProgressRing.vue'
 defineProps({
   label: { type: String, required: true },
   value: { type: [String, Number], required: true },
-  /** 값 옆 작은 보조 텍스트 (예: "지난주 대비 +4%") */
+
   caption: { type: String, default: '' },
-  /** 링에 넣을 수치. 없으면 링을 그리지 않음 */
+
   ratio: { type: Number, default: null },
   ratioMax: { type: Number, default: 100 },
   ringLabel: { type: String, default: '' },
   tone: { type: String, default: 'accent' },
-  /** ratio 대신 우측에 알약형 뱃지를 보여주고 싶을 때 (예: "이번 달 +4") */
+
   badge: { type: String, default: '' },
 })
 </script>

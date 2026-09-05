@@ -27,7 +27,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AiAnalysis {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "analysis_id")

@@ -11,7 +11,6 @@ import java.util.List;
 
 @Service
 public class MasteryService {
-
     private static final int WEAKEST_LIMIT = 3;
 
     private final ConceptMasteryRepository masteryRepository;

@@ -36,7 +36,6 @@ const router = createRouter({
       },
     },
     {
-      // 실제 주소: /home/reflection
       path: "/reflection/:lectureId",
       name: "reflection",
       component: () => import("../pages/ReflectionPage.vue"),
@@ -54,7 +53,6 @@ const router = createRouter({
       },
     },
     {
-      // 실제 주소: /home/growth
       path: "/growth",
       name: "growth",
       component: () => import("../pages/GrowthPage.vue"),
@@ -64,7 +62,6 @@ const router = createRouter({
       },
     },
     {
-      // 실제 주소: /home/history
       path: "/history",
       name: "history",
       component: () => import("../pages/HistoryPage.vue"),
@@ -74,7 +71,6 @@ const router = createRouter({
       },
     },
     {
-      // 실제 주소: /home/quiz/:quizId
       path: "/quiz/:quizId",
       name: "quiz-attempt",
       component: () => import("../pages/QuizAttemptPage.vue"),
@@ -84,7 +80,6 @@ const router = createRouter({
       },
     },
     {
-      // 실제 주소: /home/quiz
       path: "/quiz",
       name: "quiz",
       component: () => import("../pages/QuizPage.vue"),

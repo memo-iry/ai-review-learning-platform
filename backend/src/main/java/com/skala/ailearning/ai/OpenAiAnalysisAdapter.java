@@ -16,20 +16,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * 실제 모델로 회고를 분석한다.
- *
- * 프롬프트를 셋으로 나누되 포트는 하나로 둔다. 셋을 여기서 부르고 하나의 결과로 조립하므로
- * Controller · Service · AnalysisCommand · AiAnalysisResult 는 그대로다.
- *
- * 검색(RAG)은 아직 붙이지 않았다. 붙일 자리는 {@link #retrieveContext} 하나이고,
- * 그 자리가 채워져도 바깥 계약은 바뀌지 않는다.
- */
 @Component
 @Primary
 @Profile("openai")
 public class OpenAiAnalysisAdapter implements AiAnalysisPort {
-
     private static final Logger log = LoggerFactory.getLogger(OpenAiAnalysisAdapter.class);
 
     private final LlmClient llmClient;
@@ -55,7 +45,7 @@ public class OpenAiAnalysisAdapter implements AiAnalysisPort {
             if (!properties.fallbackToRules()) {
                 throw e;
             }
-            // 분석이 실패했다고 화면이 비면 안 된다. 규칙 기반 결과로 물러난다.
+
             log.warn("모델 분석에 실패해 규칙 기반 결과로 물러납니다: {}", e.getMessage());
             return fallback.analyze(command);
         }
@@ -69,8 +59,6 @@ public class OpenAiAnalysisAdapter implements AiAnalysisPort {
         Map<String, String> conceptSummaries = stringMap(analysis.path("conceptSummaries"));
 
         if (weakTopics.isEmpty()) {
-            // 취약 개념이 없으면 복습자료와 확인 문제를 만들 대상이 없다.
-            // 억지로 만들지 않고 분석만 돌려준다. 서비스가 이 상태를 화면에 알린다.
             return assemble(analysis, weakTopics, conceptSummaries, null, List.of());
         }
 
@@ -80,13 +68,6 @@ public class OpenAiAnalysisAdapter implements AiAnalysisPort {
         return assemble(analysis, weakTopics, conceptSummaries, review, quiz);
     }
 
-    /**
-     * 검색된 강의자료 본문이 들어올 자리.
-     *
-     * 지금은 강의자료 제목까지만 넘긴다. Vector Store 를 붙이면 여기서
-     * 회고로 질의를 만들고 lecture_id 로 범위를 좁혀 검색한다.
-     * 검색 결과는 어댑터 밖으로 나가지 않으므로 AnalysisCommand 를 바꿀 필요가 없다.
-     */
     private String retrieveContext(AnalysisCommand command) {
         List<String> titles = command.materialTitles();
         if (titles == null || titles.isEmpty()) {
@@ -137,7 +118,6 @@ public class OpenAiAnalysisAdapter implements AiAnalysisPort {
             List<String> options = strings(q.path("options"));
             int answerIndex = q.path("answerIndex").asInt(-1);
 
-            // 보기가 4개가 아니거나 정답 위치가 범위를 벗어나면 채점할 수 없다. 그 문항만 버린다.
             if (options.size() != 4 || answerIndex < 0 || answerIndex >= 4) {
                 log.warn("형식이 맞지 않는 문항을 버립니다: {}", q.path("question").asString());
                 continue;

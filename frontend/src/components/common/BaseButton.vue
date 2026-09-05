@@ -1,13 +1,12 @@
 <script setup>
 defineProps({
-  /** primary | outline | pill | ghost */
   variant: { type: String, default: 'primary' },
-  /** sm | md */
+
   size: { type: String, default: 'md' },
   type: { type: String, default: 'button' },
   disabled: { type: Boolean, default: false },
   block: { type: Boolean, default: false },
-  /** true면 variant와 무관하게 완전히 둥근 모서리(캡슐 형태)로 표시 */
+
   rounded: { type: Boolean, default: false },
 })
 </script>

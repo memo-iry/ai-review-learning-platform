@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
-
     private final PersonalizedReviewRepository reviewRepository;
     private final QuizRepository quizRepository;
     private final QuizAttemptRepository attemptRepository;

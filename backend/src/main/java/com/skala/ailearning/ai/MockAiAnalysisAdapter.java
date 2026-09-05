@@ -9,16 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * 규칙 기반 분석기. 개념 사전에서 회고에 등장한 개념을 찾아 이해 / 취약으로 나눈다.
- *
- * 프로파일을 걸지 않는다. openai 프로파일에서도 이 빈은 살아 있어야 한다.
- * 모델 호출이 실패했을 때 물러날 곳이기 때문이다.
- * 어느 구현을 쓸지는 OpenAiAnalysisAdapter 의 @Primary 가 정한다.
- */
 @Component
 public class MockAiAnalysisAdapter implements AiAnalysisPort {
-
     private static final int BASE_SCORE = 55;
     private static final int PER_UNDERSTOOD = 9;
     private static final int PER_WEAK = 8;
@@ -61,12 +53,6 @@ public class MockAiAnalysisAdapter implements AiAnalysisPort {
         );
     }
 
-    /**
-     * 개념별 상태 서술. 학습자가 실제로 쓴 문장을 근거로 함께 남긴다.
-     * Mock 이 없는 사실을 지어내지 않도록, 분석해서 알아낸 것(이해 / 취약)과
-     * 그 판단의 근거가 된 회고 원문만 담는다.
-     * 실제 LLM 어댑터로 교체하면 같은 자리에 모델이 쓴 서술이 들어간다.
-     */
     private static Map<String, String> conceptSummaries(List<Concept> understood,
                                                         List<Concept> weak,
                                                         AnalysisCommand command) {

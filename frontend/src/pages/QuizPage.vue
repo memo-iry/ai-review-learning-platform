@@ -16,7 +16,6 @@ import { currentUserId } from '../stores/auth.js'
 
 const router = useRouter()
 
-// TODO: 로그인 사용자 식별자는 인증 상태가 생기면 그쪽에서 받아오도록 교체
 const userId = currentUserId()
 
 const quizzes = ref([])
@@ -59,8 +58,6 @@ onMounted(async () => {
             lectureList.map((lecture) => [lecture.lectureId, lecture]),
         )
 
-        // 같은 퀴즈를 여러 번 응시했을 수 있어 가장 최근 점수만 남긴다
-        // (attempts 는 완료 시각 최신순으로 내려온다)
         const latestScoreByQuizId = {}
         attempts.forEach((attempt) => {
             if (latestScoreByQuizId[attempt.quizId] === undefined) {
@@ -174,8 +171,6 @@ function goToQuiz(quizId) {
     line-height: 1.4;
 }
 
-/* 패딩이 있으면 원이 찌그러지므로 버튼 기본 padding을 걷어내고
-   정사각형 박스 + border-radius: 50% 로 진짜 원을 만듭니다. */
 .quiz-page__today-cta {
     flex-shrink: 0;
 
@@ -194,7 +189,6 @@ function goToQuiz(quizId) {
     flex-direction: column;
 }
 
-/* "지난 퀴즈 불러오기" 목록만 이 영역 안에서 스크롤됩니다. */
 .quiz-page__scroll {
     flex: 1 1 auto;
     min-height: 0;
@@ -226,7 +220,6 @@ function goToQuiz(quizId) {
 }
 
 @media (max-width: 640px) {
-
     .quiz-page__today {
         flex-direction: column;
         align-items: flex-start;

@@ -1,7 +1,7 @@
 <script setup>
 defineProps({
   modelValue: { type: [String, Number], default: '' },
-  /** [{ value, label }] */
+
   options: { type: Array, default: () => [] },
 })
 

@@ -6,9 +6,9 @@ const props = defineProps({
   max: { type: Number, default: 100 },
   size: { type: Number, default: 72 },
   thickness: { type: Number, default: 4 },
-  /** accent | muted */
+
   tone: { type: String, default: 'accent' },
-  /** 가운데 표시 문자열. 없으면 value 를 그대로 표시 */
+
   label: { type: String, default: '' },
   suffix: { type: String, default: '' },
   showLabel: { type: Boolean, default: true },

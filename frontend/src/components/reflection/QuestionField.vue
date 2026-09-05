@@ -3,7 +3,6 @@ import BaseCard from '@/components/common/BaseCard.vue'
 import BaseTextarea from '@/components/common/BaseTextarea.vue'
 
 defineProps({
-  /** '01', '02' ... */
   number: { type: String, required: true },
   label: { type: String, required: true },
   modelValue: { type: String, default: '' },

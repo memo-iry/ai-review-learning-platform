@@ -1,6 +1,5 @@
 <script setup>
 defineProps({
-  /** rect(기본) | circle */
   shape: { type: String, default: 'rect' },
   width: { type: String, default: '100%' },
   height: { type: String, default: '1em' },
