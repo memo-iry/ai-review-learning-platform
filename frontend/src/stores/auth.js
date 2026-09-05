@@ -29,8 +29,6 @@ export async function logout() {
   }
 }
 
-// 새로고침 후 세션에서 로그인 상태를 되살린다.
-// 서버가 쿠키로 판단하므로 클라이언트가 사용자 정보를 따로 보관하지 않는다.
 export async function restoreSession() {
   if (authState.restored) {
     return authState.user

@@ -19,7 +19,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/lectures")
 public class LectureController {
-
     private final LectureRepository lectureRepository;
     private final LectureMaterialRepository materialRepository;
 

@@ -13,7 +13,6 @@ import java.util.Set;
 @Component
 @Profile("!openai")
 public class MockAiAnalysisAdapter implements AiAnalysisPort {
-
     private static final int BASE_SCORE = 55;
     private static final int PER_UNDERSTOOD = 9;
     private static final int PER_WEAK = 8;
@@ -56,12 +55,6 @@ public class MockAiAnalysisAdapter implements AiAnalysisPort {
         );
     }
 
-    /**
-     * 개념별 상태 서술. 학습자가 실제로 쓴 문장을 근거로 함께 남긴다.
-     * Mock 이 없는 사실을 지어내지 않도록, 분석해서 알아낸 것(이해 / 취약)과
-     * 그 판단의 근거가 된 회고 원문만 담는다.
-     * 실제 LLM 어댑터로 교체하면 같은 자리에 모델이 쓴 서술이 들어간다.
-     */
     private static Map<String, String> conceptSummaries(List<Concept> understood,
                                                         List<Concept> weak,
                                                         AnalysisCommand command) {

@@ -6,7 +6,7 @@ import ProgressRing from '@/components/common/ProgressRing.vue'
 defineProps({
     week: { type: [String, Number], default: '' },
     title: { type: String, required: true },
-    /** 0~100. 아직 응시 기록이 없으면 null */
+
     accuracy: { type: Number, default: null },
 })
 

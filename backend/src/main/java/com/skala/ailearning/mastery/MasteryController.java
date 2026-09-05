@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/users")
 public class MasteryController {
-
     private final MasteryService masteryService;
     private final com.skala.ailearning.common.AccessGuard accessGuard;
 

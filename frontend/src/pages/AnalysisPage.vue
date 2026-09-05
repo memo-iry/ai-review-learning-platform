@@ -210,8 +210,7 @@ watch(
   <AppLayout>
     <PageContainer size="md">
       <main class="analysis-page">
-        <!-- 로딩 화면 -->
-        <template v-if="loading">
+                <template v-if="loading">
           <header class="page-heading">
             <Skeleton
               width="60%"
@@ -277,8 +276,7 @@ watch(
           </section>
         </template>
 
-        <!-- 분석 결과 -->
-        <template v-else-if="analysis">
+                <template v-else-if="analysis">
           <header class="page-heading">
             <h1>
               {{ lectureTitle }}
@@ -412,8 +410,7 @@ watch(
           </footer>
         </template>
 
-        <!-- 오류 화면 -->
-        <EmptyState
+                <EmptyState
           v-else
           title="결과를 불러오지 못했습니다"
           :description="error"
@@ -496,9 +493,6 @@ watch(
   color: #4e535b;
 }
 
-/*
- * 현재 선택된 단계 버튼
- */
 .level-badge--active {
   background: #272727;
   color: #ffffff;

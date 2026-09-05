@@ -1,12 +1,11 @@
 <script setup>
 defineProps({
-  /** 렌더링할 태그 (article, section, li ...) */
   as: { type: String, default: 'article' },
-  /** default | accent | warning */
+
   tone: { type: String, default: 'default' },
-  /** sm | md | lg */
+
   padding: { type: String, default: 'md' },
-  /** hover/포커스 반응이 필요한 카드 */
+
   interactive: { type: Boolean, default: false },
 })
 </script>

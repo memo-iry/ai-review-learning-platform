@@ -1,10 +1,5 @@
 <script setup>
 defineProps({
-  /**
-   * md: 일반 입력 페이지
-   * lg: 기본 페이지
-   * xl: 대시보드 등 넓은 페이지
-   */
   size: {
     type: String,
     default: 'lg',
@@ -31,7 +26,6 @@ defineProps({
   box-sizing: border-box;
 }
 
-/* 기존보다 전체 콘텐츠 너비 확대 */
 .page-container--md {
   max-width: 960px;
 }

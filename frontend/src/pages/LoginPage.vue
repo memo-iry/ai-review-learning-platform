@@ -4,8 +4,6 @@ import { useRouter } from 'vue-router'
 import booksstack2 from '../assets/books-stack2.png'
 import { login } from '../stores/auth.js'
 
-// 데모 계정. 역할 버튼을 누르면 해당 계정이 채워진다.
-// 실제 역할은 서버가 정한다 — 클라이언트가 고른 값은 인증에 쓰지 않는다.
 const DEMO = {
   student: { email: 'learner@skala.com', password: 'demo' },
   admin: { email: 'admin@skala.com', password: 'demo' },
@@ -40,8 +38,7 @@ async function submit() {
 
 <template>
   <section class="login">
-    <!-- 좌측: 로그인 카드 -->
-    <div class="login__card">
+        <div class="login__card">
       <div class="login__brand">
         <h1 class="login__logo">Memo:iry</h1>
         <p class="login__tagline">복습, 이제 어렵지 않습니다</p>
@@ -111,8 +108,7 @@ async function submit() {
       </p>
     </div>
 
-    <!-- 우측: 이미지 -->
-    <div class="login__image">
+        <div class="login__image">
       <img :src="booksstack2" alt="쌓여 있는 책" />
     </div>
   </section>
@@ -130,7 +126,7 @@ async function submit() {
   display: flex;
   align-items: center;
   justify-content: center;
-   padding-left: 8rem; 
+   padding-left: 8rem;
   gap: 0.5rem;
   width: 100%;
   height: 100%;
@@ -139,7 +135,6 @@ async function submit() {
   color: var(--text-strong);
 }
 
-/* 카드 */
 .login__card {
   width: 25rem;
   border: 1px solid var(--border-color);
@@ -154,7 +149,7 @@ async function submit() {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-  text-align: center;  
+  text-align: center;
 }
 
 .login__logo {
@@ -276,7 +271,6 @@ async function submit() {
   text-decoration: underline;
 }
 
-/* 우측 이미지 */
 .login__image {
   width: 50rem;
   display: flex;
@@ -290,7 +284,6 @@ async function submit() {
   display: block;
 }
 
-/* 반응형 */
 @media (max-width: 860px) {
   .login {
     flex-direction: column;

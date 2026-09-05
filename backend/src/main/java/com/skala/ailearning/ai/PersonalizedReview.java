@@ -26,7 +26,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonalizedReview {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id")

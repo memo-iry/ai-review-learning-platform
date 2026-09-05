@@ -26,8 +26,6 @@ const loading = ref(true)
 const submitting = ref(false)
 const error = ref('')
 
-// 채점 결과는 제출 응답에만 들어 있다. 별도 화면으로 라우팅하면 넘길 방법이 없고
-// 새로고침하면 사라지므로, 같은 페이지에서 문항 화면과 결과 화면을 바꿔 보여준다.
 const result = ref(null)
 
 const LEVEL_NAMES = ['', '인지', '이해', '적용', '구현']
@@ -40,8 +38,6 @@ const progressPercent = computed(() =>
   totalCount.value ? ((currentIndex.value + 1) / totalCount.value) * 100 : 0,
 )
 
-// 문항당 대략 1분으로 어림잡은 값입니다. 실제 소요 시간 데이터가 없어
-// 정확한 값은 아니고, 대략적인 감을 주는 용도입니다.
 const estimatedTimeLeftLabel = computed(() => {
   const remaining = totalCount.value - (currentIndex.value + 1)
   return remaining <= 0 ? '곧 종료' : `${remaining}분 남음`
@@ -112,8 +108,7 @@ function goToDashboard() {
           <p class="quiz-attempt-page__topbar-text">방금 복습한 내용을 바탕으로 핵심 개념을 확인해보세요.</p>
         </div>
 
-      <!-- 로딩 중: 실제 2단 레이아웃과 같은 크기로 배치한 스켈레톤 -->
-      <div v-if="loading" class="quiz-attempt-page__body">
+            <div v-if="loading" class="quiz-attempt-page__body">
         <div class="quiz-attempt-page__main">
           <div class="quiz-attempt-page__meta">
             <Skeleton width="70px" height="0.8em" />
@@ -162,9 +157,7 @@ function goToDashboard() {
         </aside>
       </div>
 
-
-        <!-- 채점 결과 -->
-        <div v-else-if="result" class="quiz-result">
+                <div v-else-if="result" class="quiz-result">
           <BaseCard padding="lg" class="quiz-result__score">
             <p class="quiz-result__score-label">채점 결과</p>
             <p class="quiz-result__score-value">
@@ -391,7 +384,6 @@ function goToDashboard() {
   font-size: var(--text-sm);
 }
 
-/* ── 채점 결과 ───────────────────────────────── */
 .quiz-result {
   display: flex;
   flex-direction: column;

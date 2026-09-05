@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
-
     private static final String FAILED = "이메일 또는 비밀번호가 올바르지 않습니다";
 
     private final UserRepository userRepository;

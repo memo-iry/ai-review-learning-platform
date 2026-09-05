@@ -3,9 +3,9 @@ defineProps({
   eyebrow: { type: String, default: '' },
   title: { type: String, required: true },
   description: { type: String, default: '' },
-  /** 제목 아래 강조색 구분선을 보여줄지 */
+
   divider: { type: Boolean, default: false },
-  /** description 텍스트 색상: muted | accent */
+
   descriptionTone: { type: String, default: 'muted' },
 })
 </script>

@@ -1,6 +1,5 @@
 <script setup>
 defineProps({
-  /** accent | neutral | warning */
   tone: { type: String, default: 'accent' },
 })
 </script>

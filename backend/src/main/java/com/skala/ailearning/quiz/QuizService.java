@@ -18,7 +18,6 @@ import java.util.List;
 
 @Service
 public class QuizService {
-
     private static final int CORRECT_GAIN = 12;
     private static final int WRONG_LOSS = 8;
 

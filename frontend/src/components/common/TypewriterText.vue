@@ -3,7 +3,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 
 const props = defineProps({
   text: { type: String, default: '' },
-  /** 글자당 간격(ms) */
+
   speed: { type: Number, default: 26 },
 })
 

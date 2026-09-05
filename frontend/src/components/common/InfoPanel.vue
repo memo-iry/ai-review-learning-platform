@@ -4,7 +4,7 @@ import BaseCard from '@/components/common/BaseCard.vue'
 defineProps({
   title: { type: String, required: true },
   body: { type: String, default: '' },
-  /** default | accent | warning */
+
   tone: { type: String, default: 'default' },
 })
 </script>

@@ -274,7 +274,6 @@ function moveToCurrentWeek() {
   border-bottom: 1px solid #edf0f3;
 }
 
-/* 주간 회고 작성 기록 */
 .calendar-header h3 {
   margin: 0;
   color: #4b5563;
@@ -283,7 +282,6 @@ function moveToCurrentWeek() {
   line-height: 1.5;
 }
 
-/* 날짜 범위 */
 .calendar-header p {
   margin: 4px 0 0;
   color: #9ca3af;
@@ -413,10 +411,6 @@ function moveToCurrentWeek() {
   width: 100%;
   min-width: 0;
 
-  /*
-   * 글자가 여러 줄이면 항목 높이도
-   * 함께 늘어나도록 고정 높이를 제거
-   */
   min-height: 32px;
   height: auto;
   flex-shrink: 0;
@@ -437,10 +431,6 @@ function moveToCurrentWeek() {
   background: #d65427;
 }
 
-/*
- * 강의명을 한 줄로 자르지 않고
- * 필요한 만큼 줄바꿈해서 표시
- */
 .reflection-title {
   min-width: 0;
   flex: 1;

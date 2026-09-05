@@ -13,8 +13,7 @@ const loginhandler = () => {
 
 <template>
   <section class="landing">
-    <!-- 1열: 인트로 -->
-    <div class="landing__col landing__col--intro">
+        <div class="landing__col landing__col--intro">
       <div class="landing__top">
         <div class="brand">
           <img :src="logoMark" alt="MEMO:IRY 로고" class="brand__mark" />
@@ -36,13 +35,11 @@ const loginhandler = () => {
       </button>
     </div>
 
-    <!-- 2열: 이미지 -->
-    <div class="landing__col landing__col--image">
+        <div class="landing__col landing__col--image">
       <img :src="booksstack" alt="쌓여 있는 책" class="landing__image" />
     </div>
 
-    <!-- 3, 4열: 기능 소개 -->
-    <div class="landing__col landing__col--features">
+        <div class="landing__col landing__col--features">
       <div class="features__body">
         <div class="features__eyebrow">나에게<br/>가장<br/>필요한 학습 </div>
         <div class="feature">
@@ -80,8 +77,8 @@ const loginhandler = () => {
 
   display: grid;
   grid-template-columns: 1fr 1fr 2fr;
-  width: 70rem;   /* 1400px */
-  height: 47rem;    /* 800px */
+  width: 70rem;
+  height: 47rem;
   margin: 0 auto;
   border: 1px solid var(--border-color);
   background: #ffffff;
@@ -92,7 +89,7 @@ const loginhandler = () => {
 
 .landing__col {
   border-right: 1px solid var(--border-color);
-  padding: 1.75rem 1.625rem;   /* 28px 26px */
+  padding: 1.75rem 1.625rem;
   display: flex;
   flex-direction: column;
 }
@@ -101,10 +98,9 @@ const loginhandler = () => {
   border-right: none;
 }
 
-/* 1열: 인트로 */
 .landing__col--intro {
   justify-content: space-between;
-  min-height: 26.25rem;   /* 420px */
+  min-height: 26.25rem;
 }
 
 .landing__top {
@@ -116,16 +112,16 @@ const loginhandler = () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 2.5rem;   /* 로고 ↔ 헤드라인 간격 (기존 gap 값) */
+  margin-bottom: 2.5rem;
 }
 
 .brand__mark {
-  width: 1.25rem;    /* 20px */
-  height: 1.25rem;   /* 20px */
+  width: 1.25rem;
+  height: 1.25rem;
   border-radius: 50%;
   background: var(--color-primary, #cc5126);
   color: #fff;
-  font-size: 0.6875rem;   /* 11px */
+  font-size: 0.6875rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -133,7 +129,7 @@ const loginhandler = () => {
 }
 
 .brand__name {
-  font-size: 0.75rem;   /* 12px */
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.06em;
 }
@@ -143,8 +139,8 @@ const loginhandler = () => {
   font-weight: 400;
   line-height: 1.8;
   margin: 0;
-  margin-top: 1rem;          /* 이전에 추가하신 값 */
-  margin-bottom: 1rem;    /* 헤드라인 ↔ 버튼 간격, 원하는 만큼 줄이기 */
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .btn {
@@ -158,8 +154,8 @@ const loginhandler = () => {
   border: 1px solid #1a1a1a;
   color: #1a1a1a;
   border-radius: 999px;
-  padding: 0.5625rem 1.125rem;   /* 9px 18px */
-  font-size: 0.75rem;   /* 12px */
+  padding: 0.5625rem 1.125rem;
+  font-size: 0.75rem;
   font-weight: 500;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
@@ -173,10 +169,10 @@ const loginhandler = () => {
   align-self: flex-end;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;   /* 8px */
+  gap: 0.5rem;
   border: none;
-  padding: 0.5625rem 0.625rem 0.5625rem 1.25rem;   /* 9px 10px 9px 20px */
-  font-size: 0.75rem;   /* 12px */
+  padding: 0.5625rem 0.625rem 0.5625rem 1.25rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   color: var(--text-strong);
@@ -204,13 +200,12 @@ const loginhandler = () => {
 }
 
 .btn__icon {
-  width: 1rem;      /* 16px */
-  height: 1rem;     /* 16px */
+  width: 1rem;
+  height: 1rem;
   border: none;
-  padding: 0.125rem;   /* 2px */
+  padding: 0.125rem;
 }
 
-/* 2열: 이미지 */
 .landing__col--image {
   padding: 0;
 }
@@ -218,12 +213,11 @@ const loginhandler = () => {
 .landing__image {
   width: 100%;
   height: 100%;
-  min-height: 26.25rem;   /* 420px */
+  min-height: 26.25rem;
   object-fit: cover;
   display: block;
 }
 
-/* 3, 4열: 기능 소개 */
 .landing__col--features {
   background: var(--panel-bg);
   padding: 0;
@@ -239,7 +233,7 @@ const loginhandler = () => {
   padding: 0;
   letter-spacing: 0.04em;
   line-height: 0.98em;
-  font-size: 5rem;   /* 57px */
+  font-size: 5rem;
   font-weight: 400;
   color: #b4b3b398;
   pointer-events: none;
@@ -258,8 +252,8 @@ const loginhandler = () => {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1rem;   /* 16px */
-  padding: 1.25rem 1.625rem 1.75rem;   /* 20px 26px 28px */
+  gap: 1rem;
+  padding: 1.25rem 1.625rem 1.75rem;
   border-right: 1px solid var(--border-color);
 }
 
@@ -268,14 +262,14 @@ const loginhandler = () => {
 }
 
 .feature__title {
-  font-size: 0.875rem;   /* 14px */
+  font-size: 0.875rem;
   font-weight: 700;
   margin: 0;
-  margin-top: 27rem;   /* 원하는 만큼 값 조절 */
+  margin-top: 27rem;
 }
 
 .feature__desc {
-  font-size: 0.78125rem;   /* 12.5px */
+  font-size: 0.78125rem;
   line-height: 1.7;
   color: var(--text-muted);
   margin: 0;
@@ -284,14 +278,13 @@ const loginhandler = () => {
 }
 
 .feature__divider {
-  width: 4rem;   /* 선 길이 - 원하는 만큼 조절 */
+  width: 4rem;
   height: 1px;
   border: none;
   background: var(--border-color);
-  margin: 0.3rem 0 0;   /* 위아래 간격 조절 */
+  margin: 0.3rem 0 0;
 }
 
-/* 반응형 */
 @media (max-width: 860px) {
   .landing__col--features {
     grid-column: 1 / -1;

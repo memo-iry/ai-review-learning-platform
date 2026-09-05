@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 
 const props = defineProps({
-  /** 0~100 */
   value: { type: Number, required: true },
 })
 

@@ -23,7 +23,6 @@ import java.util.Map;
 
 @Service
 public class ReflectionService {
-
         private static final int UNDERSTOOD_BONUS = 15;
         private static final int WEAK_PENALTY = 20;
 
@@ -201,7 +200,6 @@ public class ReflectionService {
                 mastery.setScore(score);
                 mastery.setLevel(ConceptMastery.levelOf(score));
 
-                // 서술은 분석기가 준 것만 쓴다. 없으면 이전 서술을 지우지 않고 그대로 둔다.
                 if (summary != null && !summary.isBlank()) {
                         mastery.setSummary(summary);
                 }

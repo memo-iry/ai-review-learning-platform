@@ -6,13 +6,9 @@ import TypewriterText from '@/components/common/TypewriterText.vue'
 import tutorMessages from '@/data/tutorMessages.json'
 
 const props = defineProps({
-  /** 현재 문항의 개념명. 힌트 매칭에 사용 */
   conceptName: { type: String, default: '' },
 })
 
-// 실제 백엔드 AI 엔드포인트가 아직 없어서, 프론트엔드에 내장된 JSON을
-// "AI가 응답해준 것"처럼 흉내 내어 사용합니다. 나중에 실제 튜터 API가
-// 생기면 이 함수 내부만 fetch 호출로 바꾸면 됩니다.
 function fakeAiFetch(payload) {
   return new Promise((resolve) => {
     setTimeout(() => resolve(payload), 350 + Math.random() * 350)
@@ -69,8 +65,6 @@ function toggleReview() {
 
 onMounted(loadGreeting)
 
-// 문항이 바뀌면 새 문항에 맞는 응원 메시지를 다시 받아오고,
-// 힌트/복습 표시는 초기화합니다.
 watch(
   () => props.conceptName,
   () => {

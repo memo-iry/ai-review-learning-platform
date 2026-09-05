@@ -17,7 +17,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/quizzes")
 public class QuizController {
-
         private final QuizService quizService;
         private final com.skala.ailearning.common.AccessGuard accessGuard;
 

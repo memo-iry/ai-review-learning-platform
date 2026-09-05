@@ -120,10 +120,6 @@ async function loadData() {
   }
 }
 
-/*
- * 회고록을 한 번 이상 작성한 과목만
- * 드롭다운에 표시합니다.
- */
 const selectableLectures = computed(() => {
   const reflectedLectureIds = new Set(
     reflections.value.map((reflection) =>
@@ -156,10 +152,6 @@ const selectedLecture = computed(() => {
   )
 })
 
-/*
- * 선택한 과목의 회고록이 여러 개면
- * 가장 최근에 작성한 회고록을 선택합니다.
- */
 const selectedReflection = computed(() => {
   const matchedReflections =
     reflections.value.filter(
@@ -211,7 +203,6 @@ function moveToAnalysis() {
     return
   }
 
-  // 분석 페이지 제목에 사용할 선택 강의 저장
   learningState.lecture =
     selectedLecture.value
 

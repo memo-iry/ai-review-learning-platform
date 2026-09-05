@@ -24,7 +24,6 @@ import java.time.OffsetDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConceptMastery {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mastery_id")
@@ -43,10 +42,6 @@ public class ConceptMastery {
     @Column(name = "score")
     private Integer score;
 
-    /**
-     * 분석기가 만든 개념별 상태 서술. 복습자료 생성 프롬프트에 실어 보낼 값이다.
-     * 파생 값이며 원본이 아니다. 갱신될 때마다 덮어쓰이므로 이력은 ai_analyses 와 reflections 에 남는다.
-     */
     @Column(name = "summary", columnDefinition = "text")
     private String summary;
 

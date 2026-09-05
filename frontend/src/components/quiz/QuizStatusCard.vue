@@ -2,7 +2,7 @@
 defineProps({
   title: { type: String, default: '오늘의 퀴즈 현황' },
   progress: { type: Number, required: true },
-  /** "2분 남음" 처럼 이미 포맷된 문자열 */
+
   timeLeftLabel: { type: String, required: true },
 })
 </script>

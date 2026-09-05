@@ -16,7 +16,6 @@ import java.util.List;
 @Tag(name = "복습자료", description = "지난 복습자료와 Quiz 조회")
 @RestController
 public class ReviewController {
-
     private final ReviewService reviewService;
     private final com.skala.ailearning.common.AccessGuard accessGuard;
 

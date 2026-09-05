@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReflectionRepository extends JpaRepository<Reflection, Long> {
-
     Optional<Reflection> findByUserUserIdAndLectureLectureId(Long userId, Long lectureId);
 
     List<Reflection> findByUserUserIdOrderByCreatedAtDesc(Long userId);

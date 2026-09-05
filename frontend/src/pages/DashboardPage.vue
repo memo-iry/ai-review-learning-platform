@@ -129,12 +129,6 @@ const currentWeekday = getDatePart('weekday')
   grid-template-columns:
     repeat(2, minmax(0, 1fr));
 
-  /*
-   * 글자가 커진 만큼 카드 높이도 확대
-   * 오늘 수업: 150px
-   * 주간 기록: 280px
-   * 하단 분석: 320px
-   */
   grid-template-rows:
     auto
     150px
@@ -192,26 +186,16 @@ const currentWeekday = getDatePart('weekday')
   min-width: 0;
 }
 
-/*
- * 오늘 수업 카드의 모든 글자
- * 실제 하위 컴포넌트의 클래스명과 관계없이 적용
- */
 .today-lesson :deep(*) {
   font-size: 17px !important;
   line-height: 1.5 !important;
 }
 
-/*
- * 작성한 회고록 카드의 모든 글자
- */
 .reflection-card :deep(*) {
   font-size: 17px !important;
   line-height: 1.5 !important;
 }
 
-/*
- * 위쪽 주황색 카드 제목
- */
 .today-lesson :deep(h2),
 .today-lesson :deep(h3),
 .today-lesson :deep(.card-label),
@@ -222,9 +206,6 @@ const currentWeekday = getDatePart('weekday')
   font-weight: 700 !important;
 }
 
-/*
- * Spring AI, AI 웹 서비스 설계
- */
 .today-lesson :deep(p),
 .today-lesson :deep(span),
 .today-lesson :deep(.lecture-title),
@@ -235,9 +216,6 @@ const currentWeekday = getDatePart('weekday')
   font-weight: 600 !important;
 }
 
-/*
- * 버튼은 카드 글자보다 약간 작게 유지
- */
 .today-lesson :deep(button),
 .today-lesson :deep(button *),
 .reflection-card :deep(button),
@@ -247,17 +225,10 @@ const currentWeekday = getDatePart('weekday')
   line-height: 1.2 !important;
 }
 
-/*
- * 주간 회고 작성 기록 카드
- */
 .recent-record :deep(*) {
   line-height: 1.5 !important;
 }
 
-/*
- * 주간 회고 작성 기록 제목
- * line-height와 여백을 확보하여 위쪽 잘림 방지
- */
 .recent-record :deep(h2),
 .recent-record :deep(h3),
 .recent-record :deep(.card-title),
@@ -271,9 +242,6 @@ const currentWeekday = getDatePart('weekday')
   line-height: 1.6 !important;
 }
 
-/*
- * 주간 날짜 및 강의명
- */
 .recent-record :deep(p),
 .recent-record :deep(span),
 .recent-record :deep(li) {
@@ -281,19 +249,12 @@ const currentWeekday = getDatePart('weekday')
   line-height: 1.5 !important;
 }
 
-/*
- * 주간 기록 카드 내부 버튼
- */
 .recent-record :deep(button),
 .recent-record :deep(button *) {
   font-size: 13px !important;
   font-weight: 600 !important;
 }
 
-/*
- * 주간 기록 컴포넌트의 최상위 요소가
- * 고정 높이로 인해 잘리지 않도록 설정
- */
 .recent-record :deep(> *) {
   width: 100%;
   min-height: 100%;
@@ -301,9 +262,6 @@ const currentWeekday = getDatePart('weekday')
   overflow: visible !important;
 }
 
-/*
- * 하단 분석 카드 제목
- */
 .emotion-analysis :deep(h2),
 .emotion-analysis :deep(h3),
 .weakness-analysis :deep(h2),
@@ -313,9 +271,6 @@ const currentWeekday = getDatePart('weekday')
   line-height: 1.5 !important;
 }
 
-/*
- * 하단 분석 카드 일반 글자
- */
 .emotion-analysis :deep(p),
 .emotion-analysis :deep(span),
 .emotion-analysis :deep(li),
