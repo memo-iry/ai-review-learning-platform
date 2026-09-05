@@ -116,8 +116,7 @@ async function moveToTodayReflection() {
       )
     }
 
-    const todayKey =
-      getDateKey(new Date())
+    const todayKey = getDateKey(new Date())
 
     const todayLecture =
       lectures.find((lecture) => {
@@ -140,8 +139,7 @@ async function moveToTodayReflection() {
       )
     }
 
-    learningState.lecture =
-      todayLecture
+    learningState.lecture = todayLecture
 
     await router.push(
       `/reflection/${lectureId}`,

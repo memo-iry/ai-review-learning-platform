@@ -23,7 +23,14 @@ const quiz = ref(null)
 const answers = ref([])
 const currentIndex = ref(0)
 const loading = ref(true)
+const submitting = ref(false)
 const error = ref('')
+
+const result = ref(null)
+
+const LEVEL_NAMES = ['', '인지', '이해', '적용', '구현']
+
+const allAnswered = computed(() => answers.value.every((a) => a >= 0))
 
 const currentQuestion = computed(() => quiz.value?.questions[currentIndex.value] ?? null)
 const totalCount = computed(() => quiz.value?.questions.length ?? 0)
@@ -64,18 +71,31 @@ function goNext() {
     currentIndex.value += 1
     return
   }
-
   submitAnswers()
 }
 
 async function submitAnswers() {
+  submitting.value = true
+  error.value = ''
   try {
     const userId = currentUserId()
-    await api.submitQuiz(quiz.value.quizId, { userId, answers: answers.value })
-    router.push({ name: 'quiz' })
+    result.value = await api.submitQuiz(quiz.value.quizId, {
+      userId,
+      answers: answers.value,
+    })
   } catch (requestError) {
     error.value = requestError.message
+  } finally {
+    submitting.value = false
   }
+}
+
+function goToQuizList() {
+  router.push({ name: 'quiz' })
+}
+
+function goToDashboard() {
+  router.push({ name: 'dashboard' })
 }
 </script>
 
@@ -137,6 +157,86 @@ async function submitAnswers() {
         </aside>
       </div>
 
+                <div v-else-if="result" class="quiz-result">
+          <BaseCard padding="lg" class="quiz-result__score">
+            <p class="quiz-result__score-label">채점 결과</p>
+            <p class="quiz-result__score-value">
+              <strong>{{ result.correctCount }}</strong> / {{ result.totalCount }}
+              <span class="quiz-result__score-point">{{ result.score }}점</span>
+            </p>
+            <ProgressBar :value="result.score" />
+          </BaseCard>
+
+          <section class="quiz-result__section">
+            <h3 class="quiz-result__heading">문항별 결과</h3>
+            <BaseCard
+              v-for="(item, index) in result.results"
+              :key="index"
+              padding="lg"
+              :tone="item.correct ? 'accent' : 'warning'"
+              class="quiz-result__item"
+            >
+              <div class="quiz-result__item-head">
+                <TagBadge :tone="item.correct ? 'accent' : 'warning'">
+                  {{ item.correct ? '정답' : '오답' }}
+                </TagBadge>
+                <span class="quiz-result__item-concept">{{ item.conceptName }}</span>
+              </div>
+
+              <p class="quiz-result__question">{{ index + 1 }}. {{ item.question }}</p>
+
+              <p class="quiz-result__answer">
+                내 답 · {{ item.options[item.selectedIndex] ?? '미선택' }}
+              </p>
+              <p v-if="!item.correct" class="quiz-result__answer quiz-result__answer--correct">
+                정답 · {{ item.options[item.answerIndex] }}
+              </p>
+
+              <p class="quiz-result__explanation">{{ item.explanation }}</p>
+            </BaseCard>
+          </section>
+
+          <section v-if="result.masteryChanges?.length" class="quiz-result__section">
+            <h3 class="quiz-result__heading">이해도 반영</h3>
+            <BaseCard padding="lg">
+              <p class="quiz-result__mastery-note">
+                이번 채점 결과가 개념별 이해도에 반영되었습니다.
+              </p>
+              <ul class="quiz-result__mastery">
+                <li
+                  v-for="change in result.masteryChanges"
+                  :key="change.conceptName"
+                  class="quiz-result__mastery-row"
+                >
+                  <span class="quiz-result__mastery-name">{{ change.conceptName }}</span>
+                  <span class="quiz-result__mastery-score">
+                    {{ change.scoreBefore }}%
+                    <span
+                      class="quiz-result__arrow"
+                      :class="change.scoreAfter >= change.scoreBefore
+                        ? 'quiz-result__arrow--up'
+                        : 'quiz-result__arrow--down'"
+                    >{{ change.scoreAfter >= change.scoreBefore ? '↑' : '↓' }}</span>
+                    {{ change.scoreAfter }}%
+                  </span>
+                  <span
+                    v-if="change.levelBefore !== change.levelAfter"
+                    class="quiz-result__mastery-level"
+                  >
+                    Level {{ change.levelBefore }} → {{ change.levelAfter }}
+                    {{ LEVEL_NAMES[change.levelAfter] }}
+                  </span>
+                </li>
+              </ul>
+            </BaseCard>
+          </section>
+
+          <div class="quiz-result__nav">
+            <BaseButton variant="outline" @click="goToQuizList">퀴즈 목록</BaseButton>
+            <BaseButton variant="primary" @click="goToDashboard">대시보드로 →</BaseButton>
+          </div>
+        </div>
+
         <EmptyState v-else-if="!quiz || !currentQuestion" title="문항을 찾을 수 없습니다" description="퀴즈 목록으로 돌아가 다시 시도해 주세요." />
 
         <div v-else class="quiz-attempt-page__body">
@@ -165,8 +265,12 @@ async function submitAnswers() {
               <BaseButton variant="outline" :disabled="currentIndex === 0" @click="goPrev">
                 이전 문제
               </BaseButton>
-              <BaseButton variant="primary" @click="goNext">
-                {{ isLastQuestion ? '제출하기' : '다음 문제' }} →
+              <BaseButton
+                variant="primary"
+                :disabled="submitting || (isLastQuestion && !allAnswered)"
+                @click="goNext"
+              >
+                {{ submitting ? '채점 중...' : isLastQuestion ? '제출하기' : '다음 문제' }} →
               </BaseButton>
             </div>
           </div>
@@ -278,6 +382,149 @@ async function submitAnswers() {
   margin-top: var(--space-5);
   color: var(--color-warning);
   font-size: var(--text-sm);
+}
+
+.quiz-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  max-width: 720px;
+}
+
+.quiz-result__score-label {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-subtle);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.quiz-result__score-value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+}
+
+.quiz-result__score-value strong {
+  color: var(--color-accent);
+  font-size: var(--text-2xl);
+}
+
+.quiz-result__score-point {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.quiz-result__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.quiz-result__heading {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.quiz-result__item-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.quiz-result__item-concept {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.quiz-result__question {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.quiz-result__answer {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.quiz-result__answer--correct {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.quiz-result__explanation {
+  margin: var(--space-3) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.quiz-result__mastery-note {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.quiz-result__mastery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.quiz-result__mastery-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.quiz-result__mastery-name {
+  font-weight: 600;
+  min-width: 8rem;
+}
+
+.quiz-result__mastery-score {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+.quiz-result__arrow {
+  margin: 0 var(--space-1);
+  font-weight: 700;
+}
+
+.quiz-result__arrow--up {
+  color: var(--color-accent);
+}
+
+.quiz-result__arrow--down {
+  color: var(--color-warning);
+}
+
+.quiz-result__mastery-level {
+  margin-left: auto;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.quiz-result__nav {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 
 @media (max-width: 900px) {

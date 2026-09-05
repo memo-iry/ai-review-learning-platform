@@ -36,9 +36,12 @@ backend/src/main/java/com/skala/ailearning/ai/MockAiAnalysisAdapter.java   @Prof
 
 | 확장 지점 | 입력 | 저장 위치 |
 |---|---|---|
-| Reflection Analyzer | 강의자료 + 회고 | `ai_analyses` |
-| Review Generator | 이해도 + 강의자료 | `personalized_reviews` |
+| Reflection Analyzer | 강의자료 + 회고 | `ai_analyses` · `concept_mastery.summary` |
+| Review Generator | 취약 개념 + 강의자료 | `personalized_reviews` |
 | Quiz Generator | 취약 개념 | `quizzes` |
+
+프롬프트 설계와 RAG 파이프라인은 [`docs/rag-design.md`](docs/rag-design.md) 에 있습니다.
+검색은 어댑터 안에서 일어나므로 `AnalysisCommand` 를 바꾸지 않고 확장됩니다.
 
 ## 기술 스택
 
@@ -110,19 +113,25 @@ http://localhost:5173
 ai-review-learning-platform/
 ├── backend/
 │   └── src/main/java/com/skala/ailearning/
-│       ├── ai/          AI 확장 지점 · Mock 어댑터 · 분석 응답
-│       ├── common/      예외 처리 · CORS
+│       ├── ai/          AI 확장 지점 · 규칙 기반 어댑터 · 분석 응답
+│       ├── common/      예외 처리 · CORS · 세션 접근 통제
 │       ├── lecture/     강의 · 강의자료
-│       ├── mastery/     개념별 학습 수준
-│       ├── quiz/        Quiz · 응시 기록
+│       ├── mastery/     개념별 학습 수준 · 운영자 집계
+│       ├── quiz/        Quiz · 응시 기록 · 채점
 │       ├── reflection/  회고 작성 및 분석
-│       └── user/        사용자
+│       └── user/        사용자 · 인증
 ├── frontend/src/
-│   ├── api/             Backend API 호출
-│   ├── components/      공통 레이아웃
-│   └── pages/           대시보드 · 회고 · 분석 · 복습 · 성장
-├── docs/erd.dbml        dbdiagram.io 용 ERD
-└── supabase/migrations/ 스키마 및 시드 SQL
+│   ├── api/             Backend API 호출 (axios · 세션 쿠키)
+│   ├── components/      공통 레이아웃 · 디자인 시스템
+│   ├── stores/          로그인 상태 · 학습 진행 상태
+│   └── pages/           랜딩 · 로그인 · 대시보드 · 강의목록 · 회고 · 분석 · 회고기록 · Quiz
+├── docs/
+│   ├── erd.dbml         dbdiagram.io 용 ERD
+│   ├── api.http         엔드포인트 호출 예시
+│   └── rag-design.md    RAG · System Prompt 설계
+└── supabase/
+    ├── migrations/      스키마 및 시드 SQL
+    └── demo-reset.sql   시연 직전 초기화
 ```
 
 ## API
@@ -142,10 +151,14 @@ http://localhost:8080/v3/api-docs          OpenAPI JSON
 | GET | `/api/lectures` | 200 | 강의 목록 (최신순) |
 | GET | `/api/lectures/{lectureId}` | 200 · 404 | 강의 상세 |
 | GET | `/api/lectures/{lectureId}/materials` | 200 · 404 | 강의별 자료 |
-| POST | `/api/reflections` | 201 · 400 · 403 · 404 | 회고 저장 |
+| POST | `/api/reflections` | 201 · 400 · 403 · 404 | 회고 저장 (강의당 1건, 다시 쓰면 갱신) |
+| GET | `/api/reflections?userId=` | 200 · 403 · 404 | 내 회고 목록 |
 | POST | `/api/reflections/{reflectionId}/analyze` | 200 · 403 · 404 | 이해도 분석 및 복습자료 생성 |
+| GET | `/api/quizzes?userId=` | 200 · 403 · 404 | 내 Quiz 목록 |
+| GET | `/api/quizzes/{quizId}` | 200 · 403 · 404 | Quiz 단건 (정답·해설 제외) |
+| GET | `/api/quizzes/attempts?userId=` | 200 · 403 · 404 | Quiz 응시 이력 |
 | POST | `/api/quizzes/{quizId}/attempts` | 201 · 403 · 404 | Quiz 응시 및 채점 |
-| GET | `/api/users/{userId}/mastery` | 200 · 403 · 404 | 개념별 이해도 |
+| GET | `/api/users/{userId}/mastery` | 200 · 403 · 404 | 개념별 이해도 (점수 · 서술) |
 | GET | `/api/users/{userId}/reviews` | 200 · 403 · 404 | 복습자료 목록 |
 | GET | `/api/reviews/{reviewId}` | 200 · 403 · 404 | 복습자료 상세 |
 | GET | `/api/admin/overview` | 200 · 401 · 403 | 교육생 이해도 집계 (운영자 전용) |
@@ -242,6 +255,9 @@ users ─┬─ reflections ── ai_analyses ── personalized_reviews ─�
 - `reflections` 는 `users ↔ lectures` 를 잇는 N:M 연결 테이블입니다 (한 강의당 회고 하나)
 - `quiz_attempts` 는 `users ↔ quizzes` 를 잇습니다 (재응시 허용)
 - `concept_mastery.level` 은 `score` 에서 파생됩니다 — 두 척도를 따로 관리하지 않습니다
+- `concept_mastery.summary` 는 분석기가 만든 자연어 상태 서술입니다. 이후 복습자료 생성
+  프롬프트에 실립니다. 파생 값이며 갱신 시 덮어쓰므로, 이력은 `ai_analyses` 와
+  `reflections` 에 남습니다. Quiz 채점은 점수만 바꾸고 서술은 건드리지 않습니다
 
 ```
 score  0-25 → Level 1 인지    26-50 → Level 2 이해

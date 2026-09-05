@@ -83,7 +83,7 @@ function goToQuiz(quizId) {
   <AppLayout>
     <PageContainer>
         <div class="quiz-page">
-            <PageHeading title="퀴즈 및 복습" />
+            <PageHeading title="QUIZ" />
 
             <AppSection title="시작하기" v-if="loading">
                 <BaseCard padding="lg" class="quiz-page__today">

@@ -176,7 +176,7 @@ onMounted(loadMaterials)
   <AppLayout>
     <PageContainer>
       <main class="reflection-page">
-        <PageHeading title="새 회고 작성" description="오늘 학습한 내용을 회고록으로 입력하고 AI 분석을 통해 복습해보세요." description-tone="accent">
+        <PageHeading title="회고록 작성" description="학습한 내용을 회고록으로 입력하고 AI 분석을 통해 복습해보세요." description-tone="accent">
           <template #actions>
             <BaseSelect v-model="selectedLectureId" :options="lectureOptions" />
           </template>
@@ -190,7 +190,7 @@ onMounted(loadMaterials)
             placeholder="강의나 실습 중 헷갈렸거나 추가적인 설명이 필요한 부분을 작성해 주세요." required />
 
           <QuestionField v-model="form.wantsToLearn" number="03" label="추가로 공부하고 싶은 내용"
-            placeholder="오늘 내용을 바탕으로 더 깊이 찾아보거나 공부해보고 싶은 주제를 적어주세요." />
+            placeholder="더 깊이 찾아보거나 공부해보고 싶은 주제를 적어주세요." />
 
           <p v-if="error" class="reflection-page__error">
             {{ error }}

@@ -53,15 +53,6 @@ const router = createRouter({
       },
     },
     {
-      path: "/growth",
-      name: "growth",
-      component: () => import("../pages/GrowthPage.vue"),
-      meta: {
-        step: "내 성장",
-        requiresAnalysis: true,
-      },
-    },
-    {
       path: "/history",
       name: "history",
       component: () => import("../pages/HistoryPage.vue"),

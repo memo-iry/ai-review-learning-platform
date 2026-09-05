@@ -2,7 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api/client.js'
-import { learningState, selectLecture } from '../stores/learning.js'
+import { selectLecture } from '../stores/learning.js'
 import AppLayout from '../components/AppLayout.vue'
 import PageContainer from '../components/common/PageContainer.vue'
 import { currentUserId } from '../stores/auth.js'
